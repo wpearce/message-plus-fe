@@ -1,0 +1,46 @@
+@use '@angular/material' as mat;
+@use './app/styles/_theme-colors.scss' as theme;
+
+/* ---------- Light theme (global) ---------- */
+$brand-light: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: theme.$primary-palette,
+    tertiary: theme.$tertiary-palette
+  ),
+  density: (scale: 0)
+));
+
+$brand-dark: mat.define-theme((
+  color: (theme-type: dark, primary: theme.$primary-palette, tertiary: theme.$tertiary-palette)
+));
+
+@include mat.core-theme($brand-light);
+@include mat.all-component-themes($brand-light);
+
+/* ---------- Dark colors (toggle via <body class="dark">) ---------- */
+.dark {
+  @include mat.all-component-colors(mat.define-theme((
+    color: (
+      theme-type: dark,
+      primary: theme.$primary-palette,
+      tertiary: theme.$tertiary-palette
+    )
+  )));
+  color-scheme: dark;
+}
+
+/* ---------- Base document styles ---------- */
+/* 🔧 Emit CSS custom properties (system tokens) */
+:root {
+  @include mat.system-level-typography($brand-light);
+  @include mat.system-level-colors($brand-light);
+}
+
+html, body { height: 100%; }
+body {
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  margin: 0;
+}

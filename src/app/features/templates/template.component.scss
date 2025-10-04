@@ -1,0 +1,59 @@
+:host { display: block; }
+
+/* Card container */
+.card {
+  max-width: 960px;
+  margin-inline: auto;
+  padding: 16px;
+
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+
+  border: 1px solid
+  color-mix(in oklab, var(--mat-sys-primary) 30%, var(--mat-sys-primary-container));
+  border-radius: 16px;
+}
+
+/* Title */
+.title {
+  margin: 0 0 8px 0;
+  font: var(--mat-sys-title-large);
+  color: var(--mat-sys-on-surface);
+}
+
+/* Section headings + spacing */
+.body {
+  display: grid;
+  gap: 8px;
+  padding-block: 8px;
+}
+.body + .body {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--mat-sys-surface-variant);
+}
+.body h3 {
+  margin: 0;
+  font: var(--mat-sys-title-small);
+  color: var(--mat-sys-on-surface-variant);
+}
+
+/* The <pre> text blocks */
+.text {
+  margin: 0;
+  padding: 12px;
+  background: var(--mat-sys-surface-container-low);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  font-family: inherit;          /* avoid default monospace look */
+  white-space: pre-wrap;         /* keep line breaks, wrap long lines */
+  overflow-wrap: anywhere;       /* break very long words/URLs */
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 12px;
+}
+
+/* Small screens */
+@media (max-width: 640px) {
+  .card { padding: 12px; }
+  .text { padding: 10px; }
+}
