@@ -68,11 +68,11 @@
           "configurations": {
             "production": {
               "buildTarget": "message-plus-fe:build:production",
-              "proxyConfig": "proxy.conf.json"
+              "proxyConfig": "proxy.prod.json"
             },
             "development": {
               "buildTarget": "message-plus-fe:build:development",
-              "proxyConfig": "proxy.conf.json"
+              "proxyConfig": "proxy.dev.json"
             }
           },
           "defaultConfiguration": "development"
