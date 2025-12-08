@@ -12,9 +12,12 @@
   border: 1px solid
   color-mix(in oklab, var(--mat-sys-primary) 30%, var(--mat-sys-primary-container));
   border-radius: 16px;
+
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr; /* stack by default */
 }
 
-/* Title */
 .title {
   margin: 0 0 8px 0;
   font: var(--mat-sys-title-large);
@@ -50,6 +53,28 @@
   overflow-wrap: anywhere;       /* break very long words/URLs */
   border: 1px solid var(--mat-sys-outline-variant);
   border-radius: 12px;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  fill: currentColor;                       /* matches text color */
+}
+
+/* Switch to two columns when there's space */
+@media (min-width: 900px) {
+  .card { grid-template-columns: 1fr 1fr; }
+  .title { grid-column: 1 / -1; } /* span both columns */
+
+  .body + .body {
+    /* replace top divider with a column divider */
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+    border-left: 1px solid var(--mat-sys-surface-variant);
+    padding-left: 12px;
+  }
 }
 
 /* Small screens */
