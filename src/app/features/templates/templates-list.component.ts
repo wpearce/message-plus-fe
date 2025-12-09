@@ -4,14 +4,20 @@ import { TemplatesService } from '../../core/services/template.service';
 import { MessageTemplate } from '../../core/models/message-template';
 import { catchError, tap, of } from 'rxjs';
 import TemplateItemComponent from './template.component';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'mp-templates-list',
   standalone: true,
-  imports: [TemplateItemComponent],
+  imports: [TemplateItemComponent, RouterLink],
   template: `
     <section class="container">
-      <h1>Message Templates / Modelos de mensagens</h1>
+      <header class="toolbar">
+        <h1>Message Templates / Modelos de mensagens</h1>
+        <a class="btn primary" [routerLink]="['/templates','new']" aria-label="Create a new message">
+          New message
+        </a>
+      </header>
 
       @if (loading()) {
         <p>Loading…</p>
@@ -35,6 +41,37 @@ import TemplateItemComponent from './template.component';
       max-width: 720px;
       margin: 2rem auto;
       padding: 0 1rem;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: 1rem;
+    }
+    .toolbar h1 {
+      margin: 0;
+      font: var(--mat-sys-headline-small);
+      color: var(--mat-sys-on-surface);
+    }
+    .toolbar .btn {
+      margin-left: auto;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--mat-sys-outline-variant);
+      background: var(--mat-sys-surface-container-low);
+      color: var(--mat-sys-on-surface);
+      padding: .5rem .75rem;
+      border-radius: .75rem;
+      text-decoration: none;
+      line-height: 1;
+    }
+    .btn.primary {
+      background: var(--mat-sys-primary);
+      color: var(--mat-sys-on-primary);
+      border-color: color-mix(in oklab, var(--mat-sys-primary) 60%, transparent);
     }
 
     .list {

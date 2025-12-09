@@ -1,6 +1,10 @@
 <section class="page">
   <header class="hdr">
-    <h1>Edit message</h1>
+    @if (this.isNew) {
+      <h1>Create message</h1>
+    } @else {
+      <h1>Edit message</h1>
+    }
     <div class="spacer"></div>
     <button type="button" class="btn" (click)="cancel()">Cancel</button>
     <button type="button" class="btn primary" [disabled]="form.invalid || loading()" (click)="save()">Save</button>

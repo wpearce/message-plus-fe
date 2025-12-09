@@ -17,7 +17,10 @@ export class TemplateEditComponent {
   private fb = inject(FormBuilder);
   private templatesService = inject(TemplatesService);
 
-  readonly id = this.route.snapshot.paramMap.get('id') ?? '';
+  // id is present for edit, absent for create (/templates/new)
+  readonly id = this.route.snapshot.paramMap.get('id');
+  readonly isNew = !this.id;
+
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
 
@@ -28,7 +31,12 @@ export class TemplateEditComponent {
   });
 
   constructor() {
-    this.templatesService.getById(this.id).subscribe({
+    if (this.isNew) {
+      this.loading.set(false);
+      return;
+    }
+
+    this.templatesService.getById(this.id!).subscribe({
       next: (t) => {
         this.form.reset({
           title: t.title ?? '',
@@ -47,17 +55,30 @@ export class TemplateEditComponent {
   save(): void {
     if (this.form.invalid) return;
     this.loading.set(true);
-    const patch: Partial<MessageTemplate> = this.form.getRawValue();
-    this.templatesService.update(this.id, patch).subscribe({
-      next: () => this.router.navigate(['/templates', this.id]),
-      error: () => {
-        this.error.set('Failed to save changes.');
-        this.loading.set(false);
-      },
-    });
+
+    if (this.isNew) {
+      const body: Omit<MessageTemplate, 'id'> = this.form.getRawValue();
+      this.templatesService.create(body).subscribe({
+        next: (created) => this.router.navigate(['/templates', created.id]),
+        error: () => {
+          this.error.set('Failed to create template.');
+          this.loading.set(false);
+        },
+      });
+    } else {
+      const patch: Partial<MessageTemplate> = this.form.getRawValue();
+      this.templatesService.update(this.id!, patch).subscribe({
+        next: () => this.router.navigate(['/templates', this.id!]),
+        error: () => {
+          this.error.set('Failed to save changes.');
+          this.loading.set(false);
+        },
+      });
+    }
   }
 
   cancel(): void {
-    this.router.navigate(['/templates', this.id]);
+    if (this.isNew) this.router.navigate(['/templates']);
+    else this.router.navigate(['/templates', this.id!]);
   }
 }

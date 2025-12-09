@@ -7,6 +7,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/templates/templates-list.component'),
   },
+  { path: 'templates/new', component: TemplateEditComponent },
   { path: 'templates/:id/edit', component: TemplateEditComponent },
   { path: '**', redirectTo: '' },
 ];

@@ -17,6 +17,10 @@ export class TemplatesService {
     return this.http.get<MessageTemplate>(`${this.baseUrl}/${id}`);
   }
 
+  create(body: Omit<MessageTemplate, 'id'>): Observable<MessageTemplate> {
+    return this.http.post<MessageTemplate>(this.baseUrl, body);
+  }
+
   update(id: string, body: Partial<MessageTemplate>): Observable<MessageTemplate> {
     return this.http.put<MessageTemplate>(`${this.baseUrl}/${id}`, body);
   }
