@@ -7,9 +7,17 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class TemplatesService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiBaseUrl}/templates?paged=false`;
+  private readonly baseUrl = `${environment.apiBaseUrl}/templates`;
 
   getAll(): Observable<MessageTemplate[]> {
-    return this.http.get<MessageTemplate[]>(this.baseUrl);
+    return this.http.get<MessageTemplate[]>(`${this.baseUrl}?paged=false`);
+  }
+
+  getById(id: string): Observable<MessageTemplate> {
+    return this.http.get<MessageTemplate>(`${this.baseUrl}/${id}`);
+  }
+
+  update(id: string, body: Partial<MessageTemplate>): Observable<MessageTemplate> {
+    return this.http.put<MessageTemplate>(`${this.baseUrl}/${id}`, body);
   }
 }

@@ -1,5 +1,5 @@
 export interface MessageTemplate {
-  id: number;
+  id: string;
   title: string;
   bodyPt?: string;
   bodyEn?: string;

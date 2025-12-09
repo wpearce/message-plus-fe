@@ -1,0 +1,33 @@
+<section class="page">
+  <header class="hdr">
+    <h1>Edit message</h1>
+    <div class="spacer"></div>
+    <button type="button" class="btn" (click)="cancel()">Cancel</button>
+    <button type="button" class="btn primary" [disabled]="form.invalid || loading()" (click)="save()">Save</button>
+  </header>
+
+  @if (loading()) {
+    <div>Loading…</div>
+  } @else {
+    @if (error()) {
+      <div class="err">{{ error() }}</div>
+    }
+
+    <form [formGroup]="form" class="grid">
+      <label class="field">
+        <span class="lbl">Title</span>
+        <input formControlName="title" />
+      </label>
+
+      <label class="field span-2">
+        <span class="lbl">Body (EN)</span>
+        <textarea formControlName="bodyEn" rows="6"></textarea>
+      </label>
+
+      <label class="field span-2">
+        <span class="lbl">Body (PT)</span>
+        <textarea formControlName="bodyPt" rows="6"></textarea>
+      </label>
+    </form>
+  }
+</section>
