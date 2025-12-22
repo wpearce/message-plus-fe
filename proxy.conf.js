@@ -10,8 +10,8 @@ module.exports = [
     changeOrigin: true,
     logLevel: 'info',
     secure: false,
-    onProxyReq: (proxyReq) => {
-      proxyReq.setHeader('Authorization', `Bearer ${STATIC_TOKEN}`);
-    },
+    // onProxyReq: (proxyReq) => {
+    //   proxyReq.setHeader('Authorization', `Bearer ${STATIC_TOKEN}`);
+    // },
   },
 ];

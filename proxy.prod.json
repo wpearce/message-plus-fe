@@ -3,9 +3,6 @@
     "target": "https://messageplus.fly.dev",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug",
-    "headers": {
-      "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjMzNzY4NjI4MzYyNTI3NDAzMSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL21lc3NhZ2VwbHVzLThpdmRncS51czEueml0YWRlbC5jbG91ZCIsInN1YiI6IjMzNzY4NjI4MzA1NTM3Mjk3NSIsImF1ZCI6WyIzMzc2ODY3MDY0Mjc4Mjg5MTEiLCIzMzc2OTE2MTQ4NzA4MzY4MzgiLCIzMzc2ODY2MDg0OTkyMTkxMTkiXSwiZXhwIjoxNzY1NTcwODI1LCJpYXQiOjE3NjUxMzg4MjUsIm5iZiI6MTc2NTEzODgyNSwiY2xpZW50X2lkIjoiMzM3NjkxNjE0ODcwODM2ODM4IiwianRpIjoiVjJfMzUwMDQ0NTc0NDM5MjMxNjgwLWF0XzM1MDA0NDU3NDQzOTI5NzIxNiJ9.el1MmV8gMpVf07TR2C2CZvlmGR2gROiYmRrB1-etV9jx4FE_CRHoe0OrbExzl-WOuhko34Y21OMxyBoV5nNPXZychSC0rveUr_QMHLTFzHlCs2rU__JRVvw2TUBuC-pDd5KDSIj3WkpAtnyxMrELZw84zYja1Xfu_QJal4Wh2mZmslXIU-hj3n6um2_T3m1YkBoMurDxLbcmWwnmVZQeiYTKb3A88Jn0nJsHxKcaj6tMt1dQ6mfdcWvmtwJ6ZXEHUnRqsknHjZgcV6e3ssSFjhBH2LZ2nBv0ZITXuNHJ0b0SCO6SQdUka5dXHf6kQ0X6NpMk3oLbj22wqpm4ZphW1Q"
-    }
+    "logLevel": "debug"
   }
 }

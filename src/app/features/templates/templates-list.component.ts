@@ -5,6 +5,7 @@ import { MessageTemplate } from '../../core/models/message-template';
 import { catchError, tap, of } from 'rxjs';
 import TemplateItemComponent from './template.component';
 import {RouterLink} from '@angular/router';
+import {OidcSecurityService} from 'angular-auth-oidc-client';
 
 @Component({
   selector: 'mp-templates-list',
@@ -17,6 +18,9 @@ import {RouterLink} from '@angular/router';
         <a class="btn primary" [routerLink]="['/templates','new']" aria-label="Create a new message">
           New message
         </a>
+        <button class="btn" type="button" (click)="logout()">
+          Logout
+        </button>
       </header>
 
       @if (loading()) {
@@ -93,6 +97,7 @@ import {RouterLink} from '@angular/router';
 })
 export default class TemplatesListComponent {
   private readonly api = inject(TemplatesService);
+  private readonly oidc = inject(OidcSecurityService);
 
   loading = signal(true);
   error = signal<string | null>(null);
@@ -109,4 +114,9 @@ export default class TemplatesListComponent {
       })
     ),
     { initialValue: [] as MessageTemplate[] });
+
+  logout(): void {
+    // logs out at Zitadel + clears local tokens (uses postLogoutRedirectUri from oidcConfig)
+    this.oidc.logoff().subscribe();
+  }
 }
