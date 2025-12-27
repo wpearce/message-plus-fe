@@ -12,6 +12,7 @@ export const oidcConfig: OpenIdConfiguration = {
   scope: environment.oidcScope,
 
   silentRenew: true,
+
   useRefreshToken: true,
   renewTimeBeforeTokenExpiresInSeconds: 300,
 
