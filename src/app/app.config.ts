@@ -3,7 +3,12 @@ import { provideRouter } from '@angular/router';
 import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import { routes } from './app.routes';
 import { provideZonelessChangeDetection } from '@angular/core';
-import { provideAuth, withAppInitializerAuthCheck, authInterceptor} from 'angular-auth-oidc-client';
+import {
+  provideAuth,
+  withAppInitializerAuthCheck,
+  authInterceptor,
+  AbstractSecurityStorage, DefaultLocalStorageService
+} from 'angular-auth-oidc-client';
 import { oidcConfig } from './auth/oidc.config';
 
 export const appConfig: ApplicationConfig = {
@@ -16,5 +21,7 @@ export const appConfig: ApplicationConfig = {
       { config: oidcConfig },
       withAppInitializerAuthCheck()
     ),
+
+    { provide: AbstractSecurityStorage, useClass: DefaultLocalStorageService },
   ],
 };
