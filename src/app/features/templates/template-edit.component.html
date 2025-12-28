@@ -24,14 +24,59 @@
       </label>
 
       <label class="field span-2">
-        <span class="lbl">Body (EN)</span>
+        <div class="lbl-row">
+          <span class="lbl">Body (EN)</span>
+          <div class="ai-actions">
+            <button type="button" class="btn sm ai-btn"
+                    [disabled]="loading() || isAiBusy()"
+                    (click)="translateEn()">
+              @if (isTranslationEnBusy()) {
+                <span class="spinner"></span>
+              } @else {
+                <span>Translate</span>
+              }
+            </button>
+            <button type="button" class="btn sm ai-btn"
+                    [disabled]="loading() || isAiBusy()"
+                    (click)="improveEn()">
+              @if (isImprovingEnBusy()) {
+                <span class="spinner"></span>
+              } @else {
+                <span>Improve</span>
+              }
+            </button>
+          </div>
+        </div>
         <textarea formControlName="bodyEn" rows="6"></textarea>
       </label>
 
       <label class="field span-2">
-        <span class="lbl">Body (PT)</span>
+        <div class="lbl-row">
+          <span class="lbl">Body (PT)</span>
+          <div class="ai-actions">
+            <button type="button" class="btn sm ai-btn"
+                    [disabled]="loading() || isAiBusy()"
+                    (click)="translatePt()">
+              @if (isTranslationPtBusy()) {
+                <span class="spinner"></span>
+              } @else {
+                <span>Translate</span>
+              }
+            </button>
+            <button type="button" class="btn sm ai-btn"
+                    [disabled]="loading() || isAiBusy()"
+                    (click)="improvePt()">
+              @if (isImprovingPtBusy()) {
+                <span class="spinner"></span>
+              } @else {
+                <span>Improve</span>
+              }
+            </button>
+          </div>
+        </div>
         <textarea formControlName="bodyPt" rows="6"></textarea>
       </label>
+
     </form>
   }
 </section>

@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { TemplatesService } from '../../core/services/template.service';
-import { MessageTemplate } from '../../core/models/message-template';
+import {Component, inject, signal} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {TemplatesService} from '../../core/services/template.service';
+import {MessageTemplate} from '../../core/models/message-template';
+import {Language} from '../../helpers/enums';
 
 @Component({
   selector: 'mp-template-edit',
@@ -17,12 +18,16 @@ export class TemplateEditComponent {
   private fb = inject(FormBuilder);
   private templatesService = inject(TemplatesService);
 
-  // id is present for edit, absent for create (/templates/new)
   readonly id = this.route.snapshot.paramMap.get('id');
   readonly isNew = !this.id;
 
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
+  readonly isAiBusy = signal(false);
+  readonly isTranslationEnBusy = signal(false);
+  readonly isTranslationPtBusy = signal(false);
+  readonly isImprovingEnBusy = signal(false);
+  readonly isImprovingPtBusy = signal(false);
 
   readonly form = this.fb.nonNullable.group({
     title: ['', [Validators.required]],
@@ -48,6 +53,45 @@ export class TemplateEditComponent {
       error: () => {
         this.error.set('Failed to load template.');
         this.loading.set(false);
+      },
+    });
+  }
+
+  improveEn(): void {
+    this.improveField('en');
+  }
+  improvePt(): void {
+    this.improveField('pt');
+  }
+
+  translateEn(): void {
+    const source = this.form.controls.bodyEn.value;
+    this.translateField(source, Language.en);
+  }
+
+  translatePt(): void {
+    const source = this.form.controls.bodyEn.value;
+    this.translateField(source, Language.pt);
+  }
+
+  translateField(sourceText: string, language: Language): void {
+    const targetControl = language === Language.en ? this.form.controls.bodyPt : this.form.controls.bodyEn;
+    const busy = language === Language.en ? this.isTranslationEnBusy : this.isTranslationPtBusy;
+
+    const text = sourceText ?? '';
+    if (!text.trim()) return;
+
+    this.isAiBusy.set(true);
+    busy.set(true);
+    this.templatesService.translateText(text).subscribe({
+      next: (aiResponse) => targetControl.setValue( aiResponse.response ?? ''),
+      error: (err) => {
+        console.error('Translate failed', err);
+        this.error.set('AI translate failed.');
+      },
+      complete: () => {
+        this.isAiBusy.set(false);
+        busy.set(false);
       },
     });
   }
@@ -80,5 +124,27 @@ export class TemplateEditComponent {
   cancel(): void {
     if (this.isNew) this.router.navigate(['/templates']);
     else this.router.navigate(['/templates', this.id!]);
+  }
+
+  private improveField(lang: 'en' | 'pt'): void {
+    const control = lang === 'en' ? this.form.controls.bodyEn : this.form.controls.bodyPt;
+    const busy = lang === 'en' ? this.isImprovingEnBusy : this.isImprovingPtBusy;
+
+    const text = control.value ?? '';
+    if (!text.trim()) return;
+
+    this.isAiBusy.set(true);
+    busy.set(true);
+    this.templatesService.improveText(text).subscribe({
+      next: (aiResponse) => control.setValue(aiResponse.response ?? ''),
+      error: (err) => {
+        console.error('Improve failed', err);
+        this.error.set('AI improve failed.');
+      },
+      complete: () => {
+        this.isAiBusy.set(false);
+        busy.set(false);
+      },
+    });
   }
 }
