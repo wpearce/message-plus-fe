@@ -4,11 +4,13 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TemplatesService} from '../../core/services/template.service';
 import {MessageTemplate} from '../../core/models/message-template';
 import {Language} from '../../helpers/enums';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {ConfirmDiscardDialogComponent} from './confirm-discard-dialog.component';
 
 @Component({
   selector: 'mp-template-edit',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, MatDialogModule],
   templateUrl: './template-edit.component.html',
   styleUrl: './template-edit.component.scss',
 })
@@ -17,6 +19,7 @@ export class TemplateEditComponent {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private templatesService = inject(TemplatesService);
+  private dialog = inject(MatDialog);
 
   readonly id = this.route.snapshot.paramMap.get('id');
   readonly isNew = !this.id;
@@ -48,6 +51,7 @@ export class TemplateEditComponent {
           bodyEn: t.bodyEn ?? '',
           bodyPt: t.bodyPt ?? '',
         });
+        this.form.markAsPristine();
         this.loading.set(false);
       },
       error: () => {
@@ -84,7 +88,10 @@ export class TemplateEditComponent {
     this.isAiBusy.set(true);
     busy.set(true);
     this.templatesService.translateText(text).subscribe({
-      next: (aiResponse) => targetControl.setValue( aiResponse.response ?? ''),
+      next: (aiResponse) => {
+        targetControl.setValue( aiResponse.response ?? '');
+        targetControl.markAsDirty();
+      },
       error: (err) => {
         console.error('Translate failed', err);
         this.error.set('AI translate failed.');
@@ -103,7 +110,10 @@ export class TemplateEditComponent {
     if (this.isNew) {
       const body: Omit<MessageTemplate, 'id'> = this.form.getRawValue();
       this.templatesService.create(body).subscribe({
-        next: (created) => this.router.navigate(['/templates', created.id]),
+        next: (created) => {
+          this.form.markAsPristine();
+          this.router.navigate(['/templates', created.id]);
+        },
         error: () => {
           this.error.set('Failed to create template.');
           this.loading.set(false);
@@ -112,7 +122,10 @@ export class TemplateEditComponent {
     } else {
       const patch: Partial<MessageTemplate> = this.form.getRawValue();
       this.templatesService.update(this.id!, patch).subscribe({
-        next: () => this.router.navigate(['/templates', this.id!]),
+        next: () => {
+          this.form.markAsPristine();
+          this.router.navigate(['/templates', this.id!]);
+        },
         error: () => {
           this.error.set('Failed to save changes.');
           this.loading.set(false);
@@ -136,7 +149,10 @@ export class TemplateEditComponent {
     this.isAiBusy.set(true);
     busy.set(true);
     this.templatesService.improveText(text).subscribe({
-      next: (aiResponse) => control.setValue(aiResponse.response ?? ''),
+      next: (aiResponse) => {
+        control.setValue(aiResponse.response ?? '');
+        control.markAsDirty();
+      },
       error: (err) => {
         console.error('Improve failed', err);
         this.error.set('AI improve failed.');
