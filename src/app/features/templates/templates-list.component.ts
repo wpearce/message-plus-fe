@@ -20,7 +20,7 @@ import {MatDialog} from '@angular/material/dialog';
           <a class="btn primary add-btn" [routerLink]="['/templates','new']" aria-label="Create a new message">
             +
           </a>
-          <button class="btn icon-btn" type="button" (click)="logout()">
+          <button class="icon-btn" type="button" (click)="logout()">
             <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
               <!-- exit/logout icon -->
               <path
@@ -107,21 +107,7 @@ import {MatDialog} from '@angular/material/dialog';
       padding-inline: 0.75rem;
     }
 
-    .icon-btn {
-      width: 40px;
-      height: 40px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;                  /* overrides .btn padding for icon */
-    }
 
-    .icon {
-      width: 22px;
-      height: 22px;
-      display: block;
-      fill: currentColor;
-    }
 
     .list {
       list-style: none;

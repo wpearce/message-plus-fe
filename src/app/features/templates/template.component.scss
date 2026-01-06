@@ -63,31 +63,6 @@
   align-self: start;
 }
 
-.icon {
-  width: 20px;
-  height: 20px;
-  display: block;
-}
-
-.icon-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  border: 1px solid var(--mat-sys-outline-variant);
-  background: var(--mat-sys-surface-container-low);
-  color: var(--mat-sys-primary);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  text-decoration: none;
-  padding: 0;
-}
-
-.icon-btn:hover {
-  background: color-mix(in oklab, var(--mat-sys-on-surface) 6%, var(--mat-sys-surface-container-low));
-}
-
 .delete-btn {
   color: var(--mat-sys-error);
   border-color: color-mix(in oklab, var(--mat-sys-error) 25%, var(--mat-sys-outline-variant));
@@ -95,6 +70,20 @@
 
 .delete-btn:hover {
   background: color-mix(in oklab, var(--mat-sys-error) 10%, var(--mat-sys-surface-container-low));
+}
+
+.body-hdr {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.body-hdr h3 {
+  margin: 0;
+}
+
+mp-clipboard-button {
+  margin-left: auto; /* aligns to right edge above the text */
 }
 
 /* Switch to two columns when there's space */

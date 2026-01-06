@@ -1,7 +1,7 @@
-// src/app/features/templates/template-item.component.ts
 import {Component, input, computed, output} from '@angular/core';
 import type { MessageTemplate } from '../../core/models/message-template';
 import {RouterLink} from '@angular/router';
+import {ClipboardButtonComponent} from './clipboard-button.component';
 
 @Component({
   selector: 'mp-template',
@@ -47,18 +47,24 @@ import {RouterLink} from '@angular/router';
       <h2 class="title">{{ templateItem().title }}</h2>
 
       <section class="body">
-        <h3>English</h3>
+        <div class="body-hdr">
+          <h3>English</h3>
+          <mp-clipboard-button [text]="safeBodyEn()"></mp-clipboard-button>
+        </div>
         <pre class="text">{{ safeBodyEn() }}</pre>
       </section>
 
       <section class="body">
-        <h3>Português</h3>
+        <div class="body-hdr">
+          <h3>Português</h3>
+          <mp-clipboard-button [text]="safeBodyPt()"></mp-clipboard-button>
+        </div>
         <pre class="text">{{ safeBodyPt() }}</pre>
       </section>
     </article>
   `,
   imports: [
-    RouterLink
+    RouterLink, ClipboardButtonComponent
   ]
 })
 export default class TemplateItemComponent {

@@ -44,3 +44,29 @@ body {
   font: var(--mat-sys-body-medium);
   margin: 0;
 }
+
+/* ---------- Button styles ---------- */
+.icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  background: var(--mat-sys-surface-container-low);
+  color: var(--mat-sys-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0;
+}
+
+.icon-btn:hover {
+  background: color-mix(in oklab, var(--mat-sys-on-surface) 6%, var(--mat-sys-surface-container-low));
+}
