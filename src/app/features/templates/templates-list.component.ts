@@ -15,14 +15,25 @@ import {MatDialog} from '@angular/material/dialog';
   imports: [TemplateItemComponent, RouterLink],
   template: `
     <section class="container">
-      <header class="toolbar">
-        <h1>Message Templates / Modelos de mensagens</h1>
-        <a class="btn primary" [routerLink]="['/templates','new']" aria-label="Create a new message">
-          New message
-        </a>
-        <button class="btn" type="button" (click)="logout()">
-          Logout
-        </button>
+      <header class="toolbar ">
+        <div class="toolbar-actions">
+          <a class="btn primary add-btn" [routerLink]="['/templates','new']" aria-label="Create a new message">
+            +
+          </a>
+          <button class="btn icon-btn" type="button" (click)="logout()">
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+              <!-- exit/logout icon -->
+              <path
+                fill="currentColor"
+                d="M10 7a1 1 0 0 1 1-1h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7a1 1 0 1 1 0-2h7V8h-7a1 1 0 0 1-1-1Z"
+              />
+              <path
+                fill="currentColor"
+                d="M12.7 12 9.4 8.7a1 1 0 1 0-1.4 1.4l1.6 1.6H4a1 1 0 1 0 0 2h5.6l-1.6 1.6a1 1 0 1 0 1.4 1.4L12.7 12Z"
+              />
+            </svg>
+          </button>
+        </div>
       </header>
 
       @if (loading()) {
@@ -66,6 +77,13 @@ import {MatDialog} from '@angular/material/dialog';
       margin-left: auto;
     }
 
+    .toolbar-actions {
+      margin-left: auto;           /* pushes the whole group to the right */
+      display: inline-flex;
+      align-items: center;
+      gap: .8rem;                  /* keeps + and logout close together */
+    }
+
     .btn {
       appearance: none;
       border: 1px solid var(--mat-sys-outline-variant);
@@ -80,6 +98,29 @@ import {MatDialog} from '@angular/material/dialog';
       background: var(--mat-sys-primary);
       color: var(--mat-sys-on-primary);
       border-color: color-mix(in oklab, var(--mat-sys-primary) 60%, transparent);
+    }
+
+    .add-btn {
+      font-size: 1.25rem;
+      font-weight: 600;
+      line-height: 1;
+      padding-inline: 0.75rem;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;                  /* overrides .btn padding for icon */
+    }
+
+    .icon {
+      width: 22px;
+      height: 22px;
+      display: block;
+      fill: currentColor;
     }
 
     .list {

@@ -15,7 +15,7 @@ import {RouterLink, RouterOutlet} from '@angular/router';
   `,
   styles: [`
     .shell { padding: 1rem; border-bottom: 1px solid #e5e7eb; }
-    .brand { font-weight: 600; text-decoration: none; }
+    .brand { font-weight: 600; text-decoration: none; font-size: 1.3rem; }
     main { padding: 1rem; }
   `]
 })
