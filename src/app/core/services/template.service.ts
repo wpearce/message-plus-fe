@@ -27,6 +27,10 @@ export class TemplatesService {
     return this.http.put<MessageTemplate>(`${this.templatesBaseUrl}/${id}`, body);
   }
 
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.templatesBaseUrl}/${id}`);
+  }
+
   improveText(text: string): Observable<AiResponse> {
     return this.http.post<AiResponse>(`${this.aiBaseUrl}/improve`, { model: 'GPT4o', prompt: text});
   }

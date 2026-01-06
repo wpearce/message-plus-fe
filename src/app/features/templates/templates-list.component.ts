@@ -2,10 +2,12 @@ import {Component, inject, signal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import { TemplatesService } from '../../core/services/template.service';
 import { MessageTemplate } from '../../core/models/message-template';
-import { catchError, tap, of } from 'rxjs';
+import {catchError, tap, of, startWith, switchMap, Subject, filter} from 'rxjs';
 import TemplateItemComponent from './template.component';
 import {RouterLink} from '@angular/router';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
+import {ConfirmDiscardDialogComponent} from './confirm-discard-dialog.component';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'mp-templates-list',
@@ -33,7 +35,9 @@ import {OidcSecurityService} from 'angular-auth-oidc-client';
         <ul class="list">
           @for (t of templates(); track t.id) {
             <li>
-              <mp-template [templateItem]="t"></mp-template>
+              <mp-template [templateItem]="t"
+                           (deleteRequested)="onDeleteRequested($event)">
+              </mp-template>
             </li>
           }
         </ul>
@@ -98,22 +102,58 @@ import {OidcSecurityService} from 'angular-auth-oidc-client';
 export default class TemplatesListComponent {
   private readonly api = inject(TemplatesService);
   private readonly oidc = inject(OidcSecurityService);
+  private readonly dialog = inject(MatDialog);
+
+  private readonly refresh$ = new Subject<void>();
 
   loading = signal(true);
   error = signal<string | null>(null);
 
-  // toSignal auto-unsubscribes on destroy
   templates = toSignal<MessageTemplate[], MessageTemplate[]>(
-    this.api.getAll().pipe(
-      tap(() => this.loading.set(false)),
-      catchError(err => {
-        this.loading.set(false);
-        this.error.set('Failed to load templates.');
-        console.error('Failed to load templates', err);
-        return of([] as MessageTemplate[]);
-      })
+    this.refresh$.pipe(
+      startWith(void 0),
+      tap(() => {
+        this.loading.set(true);
+        this.error.set(null);
+      }),
+      switchMap(() =>
+        this.api.getAll().pipe(
+          tap(() => this.loading.set(false)),
+          catchError(err => {
+            this.loading.set(false);
+            this.error.set('Failed to load templates.');
+            console.error('Failed to load templates', err);
+            return of([] as MessageTemplate[]);
+          })
+        )
+      )
     ),
-    { initialValue: [] as MessageTemplate[] });
+    { initialValue: [] as MessageTemplate[] }
+  );
+
+  onDeleteRequested(message: MessageTemplate): void {
+    const ref = this.dialog.open(ConfirmDiscardDialogComponent, {
+      width: '420px',
+      disableClose: true,
+      data: {
+        title: 'Delete message?',
+        message: `Do you really want to delete "${message.title}"?`,
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
+      },
+    });
+
+    ref.afterClosed().pipe(
+      filter((confirmed: boolean) => confirmed),
+      switchMap(() => this.api.delete(String(message.id)))
+    ).subscribe({
+      next: () => this.refresh$.next(),
+      error: (err) => {
+        console.error('Failed to delete template', err);
+        this.error.set('Failed to delete template.');
+      },
+    });
+  }
 
   logout(): void {
     // logs out at Zitadel + clears local tokens (uses postLogoutRedirectUri from oidcConfig)

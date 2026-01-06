@@ -4,13 +4,11 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TemplatesService} from '../../core/services/template.service';
 import {MessageTemplate} from '../../core/models/message-template';
 import {Language} from '../../helpers/enums';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {ConfirmDiscardDialogComponent} from './confirm-discard-dialog.component';
 
 @Component({
   selector: 'mp-template-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, MatDialogModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './template-edit.component.html',
   styleUrl: './template-edit.component.scss',
 })
@@ -19,7 +17,6 @@ export class TemplateEditComponent {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private templatesService = inject(TemplatesService);
-  private dialog = inject(MatDialog);
 
   readonly id = this.route.snapshot.paramMap.get('id');
   readonly isNew = !this.id;
