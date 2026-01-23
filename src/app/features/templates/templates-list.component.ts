@@ -2,20 +2,25 @@ import {Component, inject, signal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import { TemplatesService } from '../../core/services/template.service';
 import { MessageTemplate } from '../../core/models/message-template';
-import {catchError, tap, of, startWith, switchMap, Subject, filter} from 'rxjs';
+import {BehaviorSubject, catchError, combineLatest, filter, of, startWith, Subject, switchMap, tap} from 'rxjs';
 import { TemplateItemComponent } from './template.component';
 import {RouterLink} from '@angular/router';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {ConfirmDiscardDialogComponent} from './confirm-discard-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {TagFilterComponent} from './tag-filter.component';
 
 @Component({
   selector: 'mp-templates-list',
   standalone: true,
-  imports: [TemplateItemComponent, RouterLink],
+  imports: [TemplateItemComponent, RouterLink, TagFilterComponent],
   template: `
     <section class="container">
       <header class="toolbar ">
+        <mp-tag-filter
+          [selectedTags]="selectedTags()"
+          (selectionChanged)="onTagSelectionChanged($event)"
+        ></mp-tag-filter>
         <div class="toolbar-actions">
           <a class="btn primary add-btn" [routerLink]="['/templates','new']" aria-label="Create a new message">
             +
@@ -67,18 +72,15 @@ import {MatDialog} from '@angular/material/dialog';
       align-items: center;
       gap: .75rem;
       margin-bottom: 1rem;
+      justify-content: space-between;
+      flex-wrap: wrap;
     }
     .toolbar h1 {
       margin: 0;
       font: var(--mat-sys-headline-small);
       color: var(--mat-sys-on-surface);
     }
-    .toolbar .btn {
-      margin-left: auto;
-    }
-
     .toolbar-actions {
-      margin-left: auto;           /* pushes the whole group to the right */
       display: inline-flex;
       align-items: center;
       gap: .8rem;                  /* keeps + and logout close together */
@@ -132,19 +134,23 @@ export default class TemplatesListComponent {
   private readonly dialog = inject(MatDialog);
 
   private readonly refresh$ = new Subject<void>();
+  private readonly tagFilters$ = new BehaviorSubject<string[]>([]);
 
   loading = signal(true);
   error = signal<string | null>(null);
+  selectedTags = signal<string[]>([]);
 
   templates = toSignal<MessageTemplate[], MessageTemplate[]>(
-    this.refresh$.pipe(
-      startWith(void 0),
+    combineLatest([
+      this.refresh$.pipe(startWith(void 0)),
+      this.tagFilters$
+    ]).pipe(
       tap(() => {
         this.loading.set(true);
         this.error.set(null);
       }),
-      switchMap(() =>
-        this.api.getAll().pipe(
+      switchMap(([, tags]) =>
+        this.api.getAll(tags).pipe(
           tap(() => this.loading.set(false)),
           catchError(err => {
             this.loading.set(false);
@@ -157,6 +163,11 @@ export default class TemplatesListComponent {
     ),
     { initialValue: [] as MessageTemplate[] }
   );
+
+  onTagSelectionChanged(tags: string[]): void {
+    this.selectedTags.set(tags);
+    this.tagFilters$.next(tags);
+  }
 
   onDeleteRequested(message: MessageTemplate): void {
     const ref = this.dialog.open(ConfirmDiscardDialogComponent, {
