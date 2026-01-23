@@ -47,7 +47,7 @@ import { Component, input, output } from '@angular/core';
   `]
 })
 export class TagFilterComponent {
-  readonly availableTags = ['WELCOME', 'GOODBYE'];
+  readonly availableTags = ['BEM-VINDO', 'DESPEDIDA', 'INFO', 'JAUÁ', 'BARRA', 'PERDĀO'];
 
   selectedTags = input<readonly string[]>([]);
   selectionChanged = output<string[]>();
@@ -57,10 +57,10 @@ export class TagFilterComponent {
   }
 
   toggle(tag: string): void {
-    const current = this.selectedTags();
-    const next = current.includes(tag)
-      ? current.filter((item) => item !== tag)
-      : [...current, tag];
-    this.selectionChanged.emit(next);
+    const currentSelection = this.selectedTags();
+    const updatedSelection = currentSelection.includes(tag)
+      ? currentSelection.filter((item) => item !== tag)
+      : [...currentSelection, tag];
+    this.selectionChanged.emit(updatedSelection);
   }
 }
