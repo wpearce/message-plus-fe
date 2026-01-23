@@ -2,6 +2,7 @@ import {Component, input, computed, output} from '@angular/core';
 import type { MessageTemplate } from '../../core/models/message-template';
 import {RouterLink} from '@angular/router';
 import {ClipboardButtonComponent} from './clipboard-button.component';
+import {TagListComponent} from './tag-list.component';
 
 @Component({
   selector: 'mp-template',
@@ -46,6 +47,10 @@ import {ClipboardButtonComponent} from './clipboard-button.component';
 
       <h2 class="title">{{ templateItem().title }}</h2>
 
+      @if (tagNames().length) {
+        <mp-tag-list class="tags" [tags]="tagNames()"></mp-tag-list>
+      }
+
       <section class="body">
         <div class="body-hdr">
           <h3>English</h3>
@@ -64,16 +69,23 @@ import {ClipboardButtonComponent} from './clipboard-button.component';
     </article>
   `,
   imports: [
-    RouterLink, ClipboardButtonComponent
+    RouterLink, ClipboardButtonComponent, TagListComponent
   ]
 })
-export default class TemplateItemComponent {
+export class TemplateItemComponent {
   templateItem = input.required<MessageTemplate>();
 
   deleteRequested = output<MessageTemplate>();
 
   safeBodyEn = computed(() => this.templateItem().bodyEn ?? '—');
   safeBodyPt = computed(() => this.templateItem().bodyPt ?? '—');
+
+  tagNames = computed<string[]>( () => {
+    const item = this.templateItem();
+    const names = item.tags?.map(tag => tag.name)
+      .map(name => name.trim());
+    return names ? names : [];
+  });
 
   requestDelete(event: MouseEvent) {
     event.preventDefault();

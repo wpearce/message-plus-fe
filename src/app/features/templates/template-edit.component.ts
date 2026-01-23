@@ -4,11 +4,12 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TemplatesService} from '../../core/services/template.service';
 import {MessageTemplate} from '../../core/models/message-template';
 import {Language} from '../../helpers/enums';
+import {TagListComponent} from './tag-list.component';
 
 @Component({
   selector: 'mp-template-edit',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TagListComponent],
   templateUrl: './template-edit.component.html',
   styleUrl: './template-edit.component.scss',
 })
@@ -28,6 +29,7 @@ export class TemplateEditComponent {
   readonly isTranslationPtBusy = signal(false);
   readonly isImprovingEnBusy = signal(false);
   readonly isImprovingPtBusy = signal(false);
+  readonly tags = signal<string[]>([]);
 
   readonly form = this.fb.nonNullable.group({
     title: ['', [Validators.required]],
@@ -48,6 +50,13 @@ export class TemplateEditComponent {
           bodyEn: t.bodyEn ?? '',
           bodyPt: t.bodyPt ?? '',
         });
+
+        this.tags.set(
+          (t.tags?.map(tag => tag.name) ?? [])
+            .map((name: string) => name.trim())
+            .filter(Boolean)
+        );
+
         this.form.markAsPristine();
         this.loading.set(false);
       },
