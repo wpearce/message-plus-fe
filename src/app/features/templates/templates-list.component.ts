@@ -3,7 +3,7 @@ import {toSignal} from '@angular/core/rxjs-interop';
 import { TemplatesService } from '../../core/services/template.service';
 import { MessageTemplate } from '../../core/models/message-template';
 import {catchError, tap, of, startWith, switchMap, Subject, filter} from 'rxjs';
-import TemplateItemComponent from './template.component';
+import { TemplateItemComponent } from './template.component';
 import {RouterLink} from '@angular/router';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {ConfirmDiscardDialogComponent} from './confirm-discard-dialog.component';

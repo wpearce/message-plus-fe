@@ -86,6 +86,11 @@ mp-clipboard-button {
   margin-left: auto; /* aligns to right edge above the text */
 }
 
+.tags {
+  grid-column: 1 / -1; /* so it spans both cols on wide layout */
+  margin-top: -4px;
+}
+
 /* Switch to two columns when there's space */
 @media (min-width: 900px) {
   .card { grid-template-columns: 1fr 1fr; }
