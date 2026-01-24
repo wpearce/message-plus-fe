@@ -84,6 +84,14 @@
         <textarea formControlName="bodyPt" rows="6"></textarea>
       </label>
 
+      <div class="field span-2">
+        <mp-template-tagging
+          [templateId]="id"
+          [selectedTags]="tags()"
+          (tagsUpdated)="tags.set($event)"
+        ></mp-template-tagging>
+      </div>
+
     </form>
   }
 </section>

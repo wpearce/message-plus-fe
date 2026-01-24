@@ -35,6 +35,14 @@ export class TemplatesService {
     return this.http.delete<void>(`${this.templatesBaseUrl}/${id}`);
   }
 
+  linkTag(templateId: string, tagId: string): Observable<void> {
+    return this.http.post<void>(`${this.templatesBaseUrl}/${templateId}/tags/${tagId}`, {});
+  }
+
+  unlinkTag(templateId: string, tagId: string): Observable<void> {
+    return this.http.delete<void>(`${this.templatesBaseUrl}/${templateId}/tags/${tagId}`);
+  }
+
   improveText(text: string): Observable<AiResponse> {
     return this.http.post<AiResponse>(`${this.aiBaseUrl}/improve`, { model: 'GPT4o', prompt: text});
   }

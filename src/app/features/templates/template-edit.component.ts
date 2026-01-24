@@ -5,11 +5,12 @@ import {TemplatesService} from '../../core/services/template.service';
 import {MessageTemplate} from '../../core/models/message-template';
 import {Language} from '../../helpers/enums';
 import {TagListComponent} from './tag-list.component';
+import {TemplateTaggingComponent} from './template-tagging.component';
 
 @Component({
   selector: 'mp-template-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, TagListComponent],
+  imports: [ReactiveFormsModule, TagListComponent, TemplateTaggingComponent],
   templateUrl: './template-edit.component.html',
   styleUrl: './template-edit.component.scss',
 })
