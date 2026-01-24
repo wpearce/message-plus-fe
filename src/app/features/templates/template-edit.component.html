@@ -87,8 +87,9 @@
       <div class="field span-2">
         <mp-template-tagging
           [templateId]="id"
-          [selectedTags]="tags()"
-          (tagsUpdated)="tags.set($event)"
+          [availableTags]="availableTags()"
+          [selectedTagIds]="selectedTagIds()"
+          (tagIdsUpdated)="onTagIdsUpdated($event)"
         ></mp-template-tagging>
       </div>
 

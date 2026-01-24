@@ -1,11 +1,7 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { TemplatesService } from '../../core/services/template.service';
-
-interface TagOption {
-  id: string;
-  name: string;
-}
+import { Tag } from '../../core/models/message-template';
 
 @Component({
   selector: 'mp-template-tagging',
@@ -19,7 +15,7 @@ interface TagOption {
         }
       </div>
       <div class="tagging__list">
-        @for (tag of availableTags; track tag.id) {
+        @for (tag of availableTags(); track tag.id) {
           <button
             type="button"
             class="tagging__item"
@@ -89,32 +85,24 @@ interface TagOption {
 export class TemplateTaggingComponent {
   private readonly templatesService = inject(TemplatesService);
 
-  readonly availableTags: TagOption[] = [
-    { id: 'BEM-VINDO', name: 'BEM-VINDO' },
-    { id: 'DESPEDIDA', name: 'DESPEDIDA' },
-    { id: 'INFO', name: 'INFO' },
-    { id: 'JAUÁ', name: 'JAUÁ' },
-    { id: 'BARRA', name: 'BARRA' },
-    { id: 'PERDĀO', name: 'PERDĀO' },
-  ];
-
   templateId = input<string | null>(null);
-  selectedTags = input<readonly string[]>([]);
-  tagsUpdated = output<string[]>();
+  availableTags = input<readonly Tag[]>([]);
+  selectedTagIds = input<readonly string[]>([]);
+  tagIdsUpdated = output<string[]>();
 
   readonly busyTags = signal<readonly string[]>([]);
   readonly error = signal<string | null>(null);
   readonly isDisabled = computed(() => !this.templateId());
 
-  isSelected(tag: TagOption): boolean {
-    return this.selectedTags().includes(tag.name);
+  isSelected(tag: Tag): boolean {
+    return this.selectedTagIds().includes(tag.id);
   }
 
-  isBusy(tag: TagOption): boolean {
+  isBusy(tag: Tag): boolean {
     return this.busyTags().includes(tag.id);
   }
 
-  toggle(tag: TagOption): void {
+  toggle(tag: Tag): void {
     const templateId = this.templateId();
     if (!templateId || this.isBusy(tag)) return;
 
@@ -133,11 +121,11 @@ export class TemplateTaggingComponent {
       )
       .subscribe({
         next: () => {
-          const current = this.selectedTags();
+          const current = this.selectedTagIds();
           const updated = selected
-            ? current.filter((name) => name !== tag.name)
-            : [...current, tag.name];
-          this.tagsUpdated.emit(updated);
+            ? current.filter((id) => id !== tag.id)
+            : [...current, tag.id];
+          this.tagIdsUpdated.emit(updated);
         },
         error: () => {
           this.error.set('Failed to update tag.');

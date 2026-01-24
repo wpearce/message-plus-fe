@@ -47,8 +47,8 @@ import {TagListComponent} from './tag-list.component';
 
       <h2 class="title">{{ templateItem().title }}</h2>
 
-      @if (tagNames().length) {
-        <mp-tag-list class="tags" [tags]="tagNames()"></mp-tag-list>
+      @if (tags().length) {
+        <mp-tag-list class="tags" [tags]="tags()"></mp-tag-list>
       }
 
       <section class="body">
@@ -80,12 +80,7 @@ export class TemplateItemComponent {
   safeBodyEn = computed(() => this.templateItem().bodyEn ?? '—');
   safeBodyPt = computed(() => this.templateItem().bodyPt ?? '—');
 
-  tagNames = computed<string[]>( () => {
-    const item = this.templateItem();
-    const names = item.tags?.map(tag => tag.name)
-      .map(name => name.trim());
-    return names ? names : [];
-  });
+  tags = computed(() => this.templateItem().tags ?? []);
 
   requestDelete(event: MouseEvent) {
     event.preventDefault();

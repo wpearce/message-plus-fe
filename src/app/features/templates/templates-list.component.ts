@@ -1,14 +1,15 @@
 import {Component, inject, signal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import { TemplatesService } from '../../core/services/template.service';
-import { MessageTemplate } from '../../core/models/message-template';
-import {BehaviorSubject, catchError, combineLatest, filter, of, startWith, Subject, switchMap, tap} from 'rxjs';
+import { MessageTemplate, Tag } from '../../core/models/message-template';
+import {BehaviorSubject, catchError, combineLatest, filter, of, shareReplay, startWith, Subject, switchMap, tap} from 'rxjs';
 import { TemplateItemComponent } from './template.component';
 import {RouterLink} from '@angular/router';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {ConfirmDiscardDialogComponent} from './confirm-discard-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {TagFilterComponent} from './tag-filter.component';
+import {TagService} from '../../core/services/tag.service';
 
 @Component({
   selector: 'mp-templates-list',
@@ -18,6 +19,7 @@ import {TagFilterComponent} from './tag-filter.component';
     <section class="container">
       <header class="toolbar ">
         <mp-tag-filter
+          [availableTags]="availableTags()"
           [selectedTags]="selectedTags()"
           (selectionChanged)="onTagSelectionChanged($event)"
         ></mp-tag-filter>
@@ -130,6 +132,7 @@ import {TagFilterComponent} from './tag-filter.component';
 })
 export default class TemplatesListComponent {
   private readonly api = inject(TemplatesService);
+  private readonly tagService = inject(TagService);
   private readonly oidc = inject(OidcSecurityService);
   private readonly dialog = inject(MatDialog);
 
@@ -139,18 +142,35 @@ export default class TemplatesListComponent {
   loading = signal(true);
   error = signal<string | null>(null);
   selectedTags = signal<string[]>([]);
+  availableTags = signal<Tag[]>([]);
+
+  private readonly tags$ = this.tagService.getAll().pipe(
+      tap((tags) => this.availableTags.set(tags)),
+      catchError((err) => {
+        console.error('Failed to load tags', err);
+        this.error.set('Failed to load tags.');
+        return of([] as Tag[]);
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
+    );
+
+  tags = toSignal<Tag[], Tag[]>(this.tags$, { initialValue: [] as Tag[] });
 
   templates = toSignal<MessageTemplate[], MessageTemplate[]>(
     combineLatest([
       this.refresh$.pipe(startWith(void 0)),
-      this.tagFilters$
+      this.tagFilters$,
+      this.tags$
     ]).pipe(
       tap(() => {
         this.loading.set(true);
         this.error.set(null);
       }),
-      switchMap(([, tags]) =>
-        this.api.getAll(tags).pipe(
+      switchMap(([, selectedTagIds, tags]) => {
+        const tagNames = selectedTagIds
+          .map((tagId: string) => tags.find((tag) => tag.id === tagId)?.name)
+          .filter((tagName): tagName is string => Boolean(tagName));
+        return this.api.getAll(tagNames).pipe(
           tap(() => this.loading.set(false)),
           catchError(err => {
             this.loading.set(false);
@@ -158,8 +178,8 @@ export default class TemplatesListComponent {
             console.error('Failed to load templates', err);
             return of([] as MessageTemplate[]);
           })
-        )
-      )
+        );
+      })
     ),
     { initialValue: [] as MessageTemplate[] }
   );
