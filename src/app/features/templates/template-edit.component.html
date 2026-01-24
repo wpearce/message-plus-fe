@@ -23,12 +23,14 @@
         <input formControlName="title" />
       </label>
 
-      @if (tags().length) {
-        <div class="field span-2">
-          <span class="lbl">Tags</span>
-          <mp-tag-list [tags]="tags()"></mp-tag-list>
-        </div>
-      }
+      <div class="field span-2">
+        <mp-template-tagging
+          [templateId]="id"
+          [availableTags]="availableTags()"
+          [selectedTagIds]="selectedTagIds()"
+          (tagIdsUpdated)="onTagIdsUpdated($event)"
+        ></mp-template-tagging>
+      </div>
 
       <label class="field span-2">
         <div class="lbl-row">
@@ -83,15 +85,6 @@
         </div>
         <textarea formControlName="bodyPt" rows="6"></textarea>
       </label>
-
-      <div class="field span-2">
-        <mp-template-tagging
-          [templateId]="id"
-          [availableTags]="availableTags()"
-          [selectedTagIds]="selectedTagIds()"
-          (tagIdsUpdated)="onTagIdsUpdated($event)"
-        ></mp-template-tagging>
-      </div>
 
     </form>
   }

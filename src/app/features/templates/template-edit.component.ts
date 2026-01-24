@@ -4,7 +4,6 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TemplatesService} from '../../core/services/template.service';
 import {MessageTemplate} from '../../core/models/message-template';
 import {Language} from '../../helpers/enums';
-import {TagListComponent} from './tag-list.component';
 import {TemplateTaggingComponent} from './template-tagging.component';
 import {TagService} from '../../core/services/tag.service';
 import {Tag} from '../../core/models/message-template';
@@ -12,7 +11,7 @@ import {Tag} from '../../core/models/message-template';
 @Component({
   selector: 'mp-template-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, TagListComponent, TemplateTaggingComponent],
+  imports: [ReactiveFormsModule, TemplateTaggingComponent],
   templateUrl: './template-edit.component.html',
   styleUrl: './template-edit.component.scss',
 })
@@ -33,7 +32,6 @@ export class TemplateEditComponent {
   readonly isTranslationPtBusy = signal(false);
   readonly isImprovingEnBusy = signal(false);
   readonly isImprovingPtBusy = signal(false);
-  readonly tags = signal<Tag[]>([]);
   readonly availableTags = signal<Tag[]>([]);
   readonly selectedTagIds = signal<string[]>([]);
 
@@ -66,9 +64,7 @@ export class TemplateEditComponent {
           bodyPt: t.bodyPt ?? '',
         });
 
-        const templateTags = t.tags ?? [];
-        this.tags.set(templateTags);
-        this.selectedTagIds.set(templateTags.map((tag) => tag.id));
+        this.selectedTagIds.set((t.tags ?? []).map((tag) => tag.id));
 
         this.form.markAsPristine();
         this.loading.set(false);
@@ -160,8 +156,6 @@ export class TemplateEditComponent {
 
   onTagIdsUpdated(tagIds: string[]): void {
     this.selectedTagIds.set(tagIds);
-    const updatedTags = this.availableTags().filter((tag) => tagIds.includes(tag.id));
-    this.tags.set(updatedTags);
   }
 
   private improveField(lang: 'en' | 'pt'): void {
