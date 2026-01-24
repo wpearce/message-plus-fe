@@ -34,7 +34,6 @@ export class TemplateEditComponent {
   readonly isImprovingPtBusy = signal(false);
   readonly availableTags = signal<Tag[]>([]);
   readonly selectedTagIds = signal<string[]>([]);
-  readonly tagsChanged = signal(false);
 
   readonly form = this.fb.nonNullable.group({
     title: ['', [Validators.required]],
@@ -66,7 +65,6 @@ export class TemplateEditComponent {
         });
 
         this.selectedTagIds.set((t.tags ?? []).map((tag) => tag.id));
-        this.tagsChanged.set(false);
 
         this.form.markAsPristine();
         this.loading.set(false);
@@ -137,18 +135,10 @@ export class TemplateEditComponent {
         },
       });
     } else {
-      if (!this.form.dirty && this.tagsChanged()) {
-        this.tagsChanged.set(false);
-        this.loading.set(false);
-        this.router.navigate(['/templates', this.id!]);
-        return;
-      }
-
       const patch: Partial<MessageTemplate> = this.form.getRawValue();
       this.templatesService.update(this.id!, patch).subscribe({
         next: () => {
           this.form.markAsPristine();
-          this.tagsChanged.set(false);
           this.router.navigate(['/templates', this.id!]);
         },
         error: () => {
@@ -166,9 +156,6 @@ export class TemplateEditComponent {
 
   onTagIdsUpdated(tagIds: string[]): void {
     this.selectedTagIds.set(tagIds);
-    if (!this.isNew) {
-      this.tagsChanged.set(true);
-    }
   }
 
   private improveField(lang: 'en' | 'pt'): void {

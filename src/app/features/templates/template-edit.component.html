@@ -6,8 +6,16 @@
       <h1>Edit message</h1>
     }
     <div class="spacer"></div>
-    <button type="button" class="btn" (click)="cancel()">Cancel</button>
-    <button type="button" class="btn primary" [disabled]="form.invalid || loading() || (!form.dirty && !tagsChanged())" (click)="save()">Save</button>
+    <button type="button" class="btn" (click)="cancel()" aria-label="Back">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
+        <path
+          fill="currentColor"
+          d="M15.7 5.3a1 1 0 0 1 0 1.4L10.4 12l5.3 5.3a1 1 0 1 1-1.4 1.4l-6-6a1 1 0 0 1 0-1.4l6-6a1 1 0 0 1 1.4 0Z"
+        />
+      </svg>
+      <span>Back</span>
+    </button>
+    <button type="button" class="btn primary" [disabled]="form.invalid || loading() || !form.dirty" (click)="save()">Save</button>
   </header>
 
   @if (loading()) {
