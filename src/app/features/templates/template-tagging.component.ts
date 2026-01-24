@@ -1,11 +1,14 @@
-import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { finalize } from 'rxjs';
+import { Component, computed, DestroyRef, inject, input, output, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { debounceTime, finalize, Subject } from 'rxjs';
 import { TemplatesService } from '../../core/services/template.service';
 import { Tag } from '../../core/models/message-template';
 
 @Component({
   selector: 'mp-template-tagging',
   standalone: true,
+  imports: [MatSnackBarModule],
   template: `
     <section class="tagging">
       <div class="tagging__header">
@@ -84,6 +87,9 @@ import { Tag } from '../../core/models/message-template';
 })
 export class TemplateTaggingComponent {
   private readonly templatesService = inject(TemplatesService);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly toast$ = new Subject<void>();
 
   templateId = input<string | null>(null);
   availableTags = input<readonly Tag[]>([]);
@@ -93,6 +99,17 @@ export class TemplateTaggingComponent {
   readonly busyTags = signal<readonly string[]>([]);
   readonly error = signal<string | null>(null);
   readonly isDisabled = computed(() => !this.templateId());
+
+  constructor() {
+    this.toast$
+      .pipe(debounceTime(400), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.snackBar.open('Tags updated.', undefined, {
+          duration: 2000,
+          verticalPosition: 'bottom',
+        });
+      });
+  }
 
   isSelected(tag: Tag): boolean {
     return this.selectedTagIds().includes(tag.id);
@@ -126,6 +143,7 @@ export class TemplateTaggingComponent {
             ? current.filter((id) => id !== tag.id)
             : [...current, tag.id];
           this.tagIdsUpdated.emit(updated);
+          this.toast$.next();
         },
         error: () => {
           this.error.set('Failed to update tag.');
