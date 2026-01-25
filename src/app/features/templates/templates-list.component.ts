@@ -154,8 +154,6 @@ export default class TemplatesListComponent {
       shareReplay({ bufferSize: 1, refCount: true })
     );
 
-  tags = toSignal<Tag[], Tag[]>(this.tags$, { initialValue: [] as Tag[] });
-
   templates = toSignal<MessageTemplate[], MessageTemplate[]>(
     combineLatest([
       this.refresh$.pipe(startWith(void 0)),

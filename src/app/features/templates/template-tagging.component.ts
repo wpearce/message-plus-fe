@@ -102,10 +102,10 @@ export class TemplateTaggingComponent {
 
   constructor() {
     this.toast$
-      .pipe(debounceTime(400), takeUntilDestroyed(this.destroyRef))
+      .pipe(debounceTime(1000), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.snackBar.open('Tags updated.', undefined, {
-          duration: 2000,
+          duration: 3000,
           verticalPosition: 'bottom',
         });
       });
