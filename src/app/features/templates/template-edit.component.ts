@@ -4,12 +4,14 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TemplatesService} from '../../core/services/template.service';
 import {MessageTemplate} from '../../core/models/message-template';
 import {Language} from '../../helpers/enums';
-import {TagListComponent} from './tag-list.component';
+import {TemplateTaggingComponent} from './template-tagging.component';
+import {TagService} from '../../core/services/tag.service';
+import {Tag} from '../../core/models/message-template';
 
 @Component({
   selector: 'mp-template-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, TagListComponent],
+  imports: [ReactiveFormsModule, TemplateTaggingComponent],
   templateUrl: './template-edit.component.html',
   styleUrl: './template-edit.component.scss',
 })
@@ -18,6 +20,7 @@ export class TemplateEditComponent {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private templatesService = inject(TemplatesService);
+  private tagService = inject(TagService);
 
   readonly id = this.route.snapshot.paramMap.get('id');
   readonly isNew = !this.id;
@@ -29,7 +32,8 @@ export class TemplateEditComponent {
   readonly isTranslationPtBusy = signal(false);
   readonly isImprovingEnBusy = signal(false);
   readonly isImprovingPtBusy = signal(false);
-  readonly tags = signal<string[]>([]);
+  readonly availableTags = signal<Tag[]>([]);
+  readonly selectedTagIds = signal<string[]>([]);
 
   readonly form = this.fb.nonNullable.group({
     title: ['', [Validators.required]],
@@ -38,6 +42,15 @@ export class TemplateEditComponent {
   });
 
   constructor() {
+    this.tagService.getAll().subscribe({
+      next: (tags) => {
+        this.availableTags.set(tags);
+      },
+      error: () => {
+        this.error.set('Failed to load tags.');
+      },
+    });
+
     if (this.isNew) {
       this.loading.set(false);
       return;
@@ -51,11 +64,7 @@ export class TemplateEditComponent {
           bodyPt: t.bodyPt ?? '',
         });
 
-        this.tags.set(
-          (t.tags?.map(tag => tag.name) ?? [])
-            .map((name: string) => name.trim())
-            .filter(Boolean)
-        );
+        this.selectedTagIds.set((t.tags ?? []).map((tag) => tag.id));
 
         this.form.markAsPristine();
         this.loading.set(false);
@@ -143,6 +152,10 @@ export class TemplateEditComponent {
   cancel(): void {
     if (this.isNew) this.router.navigate(['/templates']);
     else this.router.navigate(['/templates', this.id!]);
+  }
+
+  onTagIdsUpdated(tagIds: string[]): void {
+    this.selectedTagIds.set(tagIds);
   }
 
   private improveField(lang: 'en' | 'pt'): void {
