@@ -1,19 +1,20 @@
 import { Component, input, output } from '@angular/core';
+import { Tag } from '../../core/models/message-template';
 
 @Component({
   selector: 'mp-tag-filter',
   standalone: true,
   template: `
     <div class="tag-filter">
-      @for (tag of availableTags; track tag) {
+      @for (tag of availableTags(); track tag.id) {
         <button
           type="button"
           class="tag-filter__item"
-          [class.is-selected]="isSelected(tag)"
-          [attr.aria-pressed]="isSelected(tag)"
-          (click)="toggle(tag)"
+          [class.is-selected]="isSelected(tag.id)"
+          [attr.aria-pressed]="isSelected(tag.id)"
+          (click)="toggle(tag.id)"
         >
-          {{ tag }}
+          {{ tag.name }}
         </button>
       }
     </div>
@@ -47,20 +48,19 @@ import { Component, input, output } from '@angular/core';
   `]
 })
 export class TagFilterComponent {
-  readonly availableTags = ['BEM-VINDO', 'DESPEDIDA', 'INFO', 'JAUÁ', 'BARRA', 'PERDĀO'];
-
+  availableTags = input<readonly Tag[]>([]);
   selectedTags = input<readonly string[]>([]);
   selectionChanged = output<string[]>();
 
-  isSelected(tag: string): boolean {
-    return this.selectedTags().includes(tag);
+  isSelected(tagId: string): boolean {
+    return this.selectedTags().includes(tagId);
   }
 
-  toggle(tag: string): void {
+  toggle(tagId: string): void {
     const currentSelection = this.selectedTags();
-    const updatedSelection = currentSelection.includes(tag)
-      ? currentSelection.filter((item) => item !== tag)
-      : [...currentSelection, tag];
+    const updatedSelection = currentSelection.includes(tagId)
+      ? currentSelection.filter((item) => item !== tagId)
+      : [...currentSelection, tagId];
     this.selectionChanged.emit(updatedSelection);
   }
 }
