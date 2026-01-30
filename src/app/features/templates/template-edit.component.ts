@@ -89,7 +89,7 @@ export class TemplateEditComponent {
   }
 
   translatePt(): void {
-    const source = this.form.controls.bodyEn.value;
+    const source = this.form.controls.bodyPt.value;
     this.translateField(source, Language.pt);
   }
 
