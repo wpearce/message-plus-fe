@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import { TemplatesService } from '../../core/services/template.service';
 import { MessageTemplate, Tag } from '../../core/models/message-template';
@@ -10,6 +10,7 @@ import {ConfirmDiscardDialogComponent} from './confirm-discard-dialog.component'
 import {MatDialog} from '@angular/material/dialog';
 import {TagFilterComponent} from './tag-filter.component';
 import {TagService} from '../../core/services/tag.service';
+import {AuthorizationService} from '../../core/services/authorization.service';
 
 @Component({
   selector: 'mp-templates-list',
@@ -17,6 +18,12 @@ import {TagService} from '../../core/services/tag.service';
   imports: [TemplateItemComponent, RouterLink, TagFilterComponent],
   template: `
     <section class="container">
+      @if (isReadOnly()) {
+        <div class="read-only-banner" role="status" aria-live="polite">
+          Read-only mode: you don't have permission to modify templates.
+        </div>
+      }
+
       <header class="toolbar ">
         <mp-tag-filter
           [availableTags]="availableTags()"
@@ -24,9 +31,16 @@ import {TagService} from '../../core/services/tag.service';
           (selectionChanged)="onTagSelectionChanged($event)"
         ></mp-tag-filter>
         <div class="toolbar-actions">
-          <a class="btn primary add-btn" [routerLink]="['/templates','new']" aria-label="Create a new message">
+          <button
+            type="button"
+            class="btn primary add-btn"
+            [routerLink]="['/templates','new']"
+            [disabled]="isReadOnly()"
+            [title]="isReadOnly() ? 'Read-only mode' : 'Create a new message'"
+            aria-label="Create a new message"
+          >
             +
-          </a>
+          </button>
           <button class="icon-btn" type="button" (click)="logout()">
             <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
               <!-- exit/logout icon -->
@@ -54,6 +68,7 @@ import {TagService} from '../../core/services/tag.service';
           @for (t of templates(); track t.id) {
             <li>
               <mp-template [templateItem]="t"
+                           [readOnly]="isReadOnly()"
                            (deleteRequested)="onDeleteRequested($event)">
               </mp-template>
             </li>
@@ -67,6 +82,16 @@ import {TagService} from '../../core/services/tag.service';
       max-width: 720px;
       margin: 2rem auto;
       padding: 0 1rem;
+    }
+
+    .read-only-banner {
+      margin-bottom: 1rem;
+      padding: .75rem 1rem;
+      border-radius: .75rem;
+      border: 1px solid var(--mat-sys-outline-variant);
+      background: var(--mat-sys-surface-container-low);
+      color: var(--mat-sys-on-surface-variant);
+      font: var(--mat-sys-body-medium);
     }
 
     .toolbar {
@@ -133,11 +158,15 @@ import {TagService} from '../../core/services/tag.service';
 export default class TemplatesListComponent {
   private readonly api = inject(TemplatesService);
   private readonly tagService = inject(TagService);
+  private readonly authorizationService = inject(AuthorizationService);
   private readonly oidc = inject(OidcSecurityService);
   private readonly dialog = inject(MatDialog);
 
   private readonly refresh$ = new Subject<void>();
   private readonly tagFilters$ = new BehaviorSubject<string[]>([]);
+
+  readonly hasTemplatesWriteScope = toSignal(this.authorizationService.hasTemplatesWriteScope$, { initialValue: false });
+  readonly isReadOnly = computed(() => !this.hasTemplatesWriteScope());
 
   loading = signal(true);
   error = signal<string | null>(null);
@@ -188,6 +217,8 @@ export default class TemplatesListComponent {
   }
 
   onDeleteRequested(message: MessageTemplate): void {
+    if (this.isReadOnly()) return;
+
     const ref = this.dialog.open(ConfirmDiscardDialogComponent, {
       width: '420px',
       disableClose: true,

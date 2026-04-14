@@ -13,9 +13,12 @@ import {TagListComponent} from './tag-list.component';
       <div class="icon-bar">
         <a
           class="icon-btn edit-btn"
-          [routerLink]="['/templates', templateItem().id, 'edit']"
+          [class.is-disabled]="readOnly()"
+          [routerLink]="readOnly() ? null : ['/templates', templateItem().id, 'edit']"
+          [attr.aria-disabled]="readOnly()"
+          [attr.tabindex]="readOnly() ? -1 : null"
           aria-label="Edit Message"
-          title="Edit"
+          [title]="readOnly() ? 'Read-only mode' : 'Edit'"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
             <path
@@ -27,7 +30,8 @@ import {TagListComponent} from './tag-list.component';
           type="button"
           class="icon-btn delete-btn"
           aria-label="Delete Message"
-          title="Delete"
+          [title]="readOnly() ? 'Read-only mode' : 'Delete'"
+          [disabled]="readOnly()"
           (click)="requestDelete($event)"
         >
           <!-- trash icon -->
@@ -70,10 +74,18 @@ import {TagListComponent} from './tag-list.component';
   `,
   imports: [
     RouterLink, ClipboardButtonComponent, TagListComponent
-  ]
+  ],
+  styles: [`
+    .is-disabled {
+      opacity: 0.55;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+  `]
 })
 export class TemplateItemComponent {
   templateItem = input.required<MessageTemplate>();
+  readOnly = input(false);
 
   deleteRequested = output<MessageTemplate>();
 
@@ -85,6 +97,7 @@ export class TemplateItemComponent {
   requestDelete(event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
+    if (this.readOnly()) return;
     this.deleteRequested.emit(this.templateItem());
   }
 }
