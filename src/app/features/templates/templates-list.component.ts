@@ -20,7 +20,7 @@ import {AuthorizationService} from '../../core/services/authorization.service';
     <section class="container">
       @if (isReadOnly()) {
         <div class="read-only-banner" role="status" aria-live="polite">
-          Read-only mode: you don't have permission to modify templates.
+          Read-only mode
         </div>
       }
 
@@ -88,9 +88,9 @@ import {AuthorizationService} from '../../core/services/authorization.service';
       margin-bottom: 1rem;
       padding: .75rem 1rem;
       border-radius: .75rem;
-      border: 1px solid var(--mat-sys-outline-variant);
-      background: var(--mat-sys-surface-container-low);
-      color: var(--mat-sys-on-surface-variant);
+      border: 1px solid color-mix(in oklab, var(--mat-sys-error) 35%, var(--mat-sys-outline-variant));
+      background: color-mix(in oklab, var(--mat-sys-error) 10%, white);
+      color: color-mix(in oklab, var(--mat-sys-error) 65%, var(--mat-sys-on-surface));
       font: var(--mat-sys-body-medium);
     }
 

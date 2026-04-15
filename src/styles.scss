@@ -70,3 +70,15 @@ body {
 .icon-btn:hover {
   background: color-mix(in oklab, var(--mat-sys-on-surface) 6%, var(--mat-sys-surface-container-low));
 }
+
+.icon-btn:disabled {
+  background: var(--mat-sys-surface-container);
+  color: var(--mat-sys-outline);
+  border-color: var(--mat-sys-outline-variant);
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.icon-btn:disabled:hover {
+  background: var(--mat-sys-surface-container);
+}
