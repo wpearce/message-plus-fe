@@ -129,6 +129,12 @@ import {AuthorizationService} from '../../core/services/authorization.service';
       border-color: color-mix(in oklab, var(--mat-sys-primary) 60%, transparent);
     }
 
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: grayscale(35%);
+    }
+
     .add-btn {
       font-size: 1.25rem;
       font-weight: 600;
