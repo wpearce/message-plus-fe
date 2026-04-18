@@ -44,11 +44,11 @@ export class TemplatesService {
   }
 
   improveText(text: string): Observable<AiResponse> {
-    return this.http.post<AiResponse>(`${this.aiBaseUrl}/improve`, { model: 'GPT4o', prompt: text});
+    return this.http.post<AiResponse>(`${this.aiBaseUrl}/improve`, { model: 'GPT5', prompt: text});
   }
 
   translateText(text: string): Observable<AiResponse> {
-    return this.http.post<AiResponse>(`${this.aiBaseUrl}/translate`, { model: 'GPT4o', prompt: text});
+    return this.http.post<AiResponse>(`${this.aiBaseUrl}/translate`, { model: 'GPT5', prompt: text});
 
   }
 }
