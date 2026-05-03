@@ -123,14 +123,12 @@ export class TemplateEditComponent {
 
   save(): void {
     if (this.form.invalid) return;
-    this.loading.set(true);
 
     if (this.isNew) {
       const body: Omit<MessageTemplate, 'id'> = this.form.getRawValue();
       this.templatesService.create(body).subscribe({
         next: (created) => {
           this.form.markAsPristine();
-          this.loading.set(false);
           const dialogRef = this.dialog.open(TemplateFirstSaveTagsDialogComponent, {
             data: {
               templateId: created.id,
@@ -146,10 +144,10 @@ export class TemplateEditComponent {
         },
         error: () => {
           this.error.set('Failed to create template.');
-          this.loading.set(false);
         },
       });
     } else {
+      this.loading.set(true);
       const patch: Partial<MessageTemplate> = this.form.getRawValue();
       this.templatesService.update(this.id!, patch).subscribe({
         next: () => {
