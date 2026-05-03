@@ -1,4 +1,5 @@
 import {Component, inject, signal} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {TemplatesService} from '../../core/services/template.service';
@@ -7,6 +8,7 @@ import {Language} from '../../helpers/enums';
 import {TemplateTaggingComponent} from './template-tagging.component';
 import {TagService} from '../../core/services/tag.service';
 import {Tag} from '../../core/models/message-template';
+import { TemplateFirstSaveTagsDialogComponent } from './template-first-save-tags-dialog.component';
 
 @Component({
   selector: 'mp-template-edit',
@@ -21,6 +23,7 @@ export class TemplateEditComponent {
   private fb = inject(FormBuilder);
   private templatesService = inject(TemplatesService);
   private tagService = inject(TagService);
+  private dialog = inject(MatDialog);
 
   readonly id = this.route.snapshot.paramMap.get('id');
   readonly isNew = !this.id;
@@ -120,21 +123,31 @@ export class TemplateEditComponent {
 
   save(): void {
     if (this.form.invalid) return;
-    this.loading.set(true);
 
     if (this.isNew) {
       const body: Omit<MessageTemplate, 'id'> = this.form.getRawValue();
       this.templatesService.create(body).subscribe({
         next: (created) => {
           this.form.markAsPristine();
-          this.router.navigate(['/templates', created.id]);
+          const dialogRef = this.dialog.open(TemplateFirstSaveTagsDialogComponent, {
+            data: {
+              templateId: created.id,
+              tags: this.availableTags(),
+            },
+            width: '700px',
+            maxWidth: '95vw',
+          });
+
+          dialogRef.afterClosed().subscribe(() => {
+            this.router.navigate(['/templates']);
+          });
         },
         error: () => {
           this.error.set('Failed to create template.');
-          this.loading.set(false);
         },
       });
     } else {
+      this.loading.set(true);
       const patch: Partial<MessageTemplate> = this.form.getRawValue();
       this.templatesService.update(this.id!, patch).subscribe({
         next: () => {
