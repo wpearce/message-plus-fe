@@ -130,6 +130,7 @@ export class TemplateEditComponent {
       this.templatesService.create(body).subscribe({
         next: (created) => {
           this.form.markAsPristine();
+          this.loading.set(false);
           const dialogRef = this.dialog.open(TemplateFirstSaveTagsDialogComponent, {
             data: {
               templateId: created.id,
@@ -140,7 +141,7 @@ export class TemplateEditComponent {
           });
 
           dialogRef.afterClosed().subscribe(() => {
-            this.router.navigate(['/templates', created.id]);
+            this.router.navigate(['/templates']);
           });
         },
         error: () => {
