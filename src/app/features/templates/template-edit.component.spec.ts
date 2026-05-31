@@ -52,12 +52,11 @@ describe('TemplateEditComponent', () => {
     }).compileComponents();
   });
 
-  it('creates a new template and opens the first-save tags dialog', () => {
+  it('creates a new template and opens the first-save tags dialog', async () => {
     templatesService.create.and.returnValue(of(createdTemplate));
-    const fixture = TestBed.createComponent(TemplateEditComponent);
-    fixture.detectChanges();
+    const fixture = await createComponent();
 
-    enterTitleAndSave(fixture, 'Welcome');
+    await enterTitleAndSave(fixture, 'Welcome');
 
     expect(templatesService.create).toHaveBeenCalledWith({
       title: 'Welcome',
@@ -75,13 +74,11 @@ describe('TemplateEditComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/templates']);
   });
 
-  it('shows an error message when creating a new template fails', () => {
+  it('shows an error message when creating a new template fails', async () => {
     templatesService.create.and.returnValue(throwError(() => new Error('Request failed')));
-    const fixture = TestBed.createComponent(TemplateEditComponent);
-    fixture.detectChanges();
+    const fixture = await createComponent();
 
-    enterTitleAndSave(fixture, 'Welcome');
-    fixture.detectChanges();
+    await enterTitleAndSave(fixture, 'Welcome');
 
     expect(dialog.open).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
@@ -90,14 +87,25 @@ describe('TemplateEditComponent', () => {
     );
   });
 
-  function enterTitleAndSave(fixture: ComponentFixture<TemplateEditComponent>, title: string): void {
+  async function createComponent(): Promise<ComponentFixture<TemplateEditComponent>> {
+    const fixture = TestBed.createComponent(TemplateEditComponent);
+    fixture.autoDetectChanges();
+    await fixture.whenStable();
+    return fixture;
+  }
+
+  async function enterTitleAndSave(
+    fixture: ComponentFixture<TemplateEditComponent>,
+    title: string
+  ): Promise<void> {
     const element = fixture.nativeElement as HTMLElement;
     const titleInput = element.querySelector<HTMLInputElement>('input[formControlName="title"]')!;
     titleInput.value = title;
     titleInput.dispatchEvent(new Event('input'));
-    fixture.detectChanges();
+    await fixture.whenStable();
 
     const saveButton = element.querySelector<HTMLButtonElement>('button.primary')!;
     saveButton.click();
+    await fixture.whenStable();
   }
 });
