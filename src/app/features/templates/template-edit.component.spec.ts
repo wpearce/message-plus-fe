@@ -3,6 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
+import { vi } from 'vitest';
+import type { Mock } from 'vitest';
 import { TagService } from '../../core/services/tag.service';
 import { TemplatesService } from '../../core/services/template.service';
 import { TemplateEditComponent } from './template-edit.component';
@@ -17,27 +19,35 @@ describe('TemplateEditComponent', () => {
     bodyPt: '',
   };
 
-  let templatesService: jasmine.SpyObj<TemplatesService>;
-  let tagService: jasmine.SpyObj<TagService>;
-  let router: jasmine.SpyObj<Router>;
-  let dialog: jasmine.SpyObj<MatDialog>;
+  let templatesService: {
+    create: Mock;
+    getById: Mock;
+    improveText: Mock;
+    linkTag: Mock;
+    translateText: Mock;
+    unlinkTag: Mock;
+    update: Mock;
+  };
+  let tagService: { getAll: Mock };
+  let router: { navigate: Mock };
+  let dialog: { open: Mock };
 
   beforeEach(async () => {
-    templatesService = jasmine.createSpyObj<TemplatesService>('TemplatesService', [
-      'create',
-      'getById',
-      'improveText',
-      'linkTag',
-      'translateText',
-      'unlinkTag',
-      'update',
-    ]);
-    tagService = jasmine.createSpyObj<TagService>('TagService', ['getAll']);
-    router = jasmine.createSpyObj<Router>('Router', ['navigate']);
-    dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
+    templatesService = {
+      create: vi.fn(),
+      getById: vi.fn(),
+      improveText: vi.fn(),
+      linkTag: vi.fn(),
+      translateText: vi.fn(),
+      unlinkTag: vi.fn(),
+      update: vi.fn(),
+    };
+    tagService = { getAll: vi.fn() };
+    router = { navigate: vi.fn() };
+    dialog = { open: vi.fn() };
 
-    tagService.getAll.and.returnValue(of(availableTags));
-    dialog.open.and.returnValue({ afterClosed: () => of(undefined) } as never);
+    tagService.getAll.mockReturnValue(of(availableTags));
+    dialog.open.mockReturnValue({ afterClosed: () => of(undefined) });
 
     await TestBed.configureTestingModule({
       imports: [TemplateEditComponent],
@@ -53,7 +63,7 @@ describe('TemplateEditComponent', () => {
   });
 
   it('creates a new template and opens the first-save tags dialog', async () => {
-    templatesService.create.and.returnValue(of(createdTemplate));
+    templatesService.create.mockReturnValue(of(createdTemplate));
     const fixture = await createComponent();
 
     await enterTitleAndSave(fixture, 'Welcome');
@@ -75,7 +85,7 @@ describe('TemplateEditComponent', () => {
   });
 
   it('shows an error message when creating a new template fails', async () => {
-    templatesService.create.and.returnValue(throwError(() => new Error('Request failed')));
+    templatesService.create.mockReturnValue(throwError(() => new Error('Request failed')));
     const fixture = await createComponent();
 
     await enterTitleAndSave(fixture, 'Welcome');
