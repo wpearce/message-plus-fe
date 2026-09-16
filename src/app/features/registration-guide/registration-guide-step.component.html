@@ -1,0 +1,79 @@
+<article class="guide" [class.error-step]="step().kind === 'error'">
+  <header class="topbar">
+    <a
+      class="guide-brand"
+      routerLink="/guide/registration/welcome"
+      aria-label="Registration guide home"
+    >
+      <span class="mark">M+</span><span>Guest guide</span>
+    </a>
+    <div class="languages" aria-label="Guide language">
+      <button
+        type="button"
+        [class.active]="language() === 'en'"
+        (click)="setLanguage('en')"
+        [attr.aria-pressed]="language() === 'en'"
+      >
+        EN
+      </button>
+      <button
+        type="button"
+        [class.active]="language() === 'pt'"
+        (click)="setLanguage('pt')"
+        [attr.aria-pressed]="language() === 'pt'"
+      >
+        PT
+      </button>
+    </div>
+  </header>
+
+  <div class="progress-row">
+    <span>{{ language() === 'en' ? 'Step' : 'Etapa' }} {{ index() + 1 }} / {{ steps.length }}</span>
+    <div
+      class="progress"
+      role="progressbar"
+      [attr.aria-valuenow]="index() + 1"
+      aria-valuemin="1"
+      [attr.aria-valuemax]="steps.length"
+    >
+      <i [style.width.%]="((index() + 1) / steps.length) * 100"></i>
+    </div>
+  </div>
+
+  <main class="card">
+    <section class="visual">
+      <img [src]="step().image" [alt]="step().imageAlt[language()]" />
+      <span class="screen-label">{{
+        language() === 'en' ? 'What you’ll see' : 'O que você verá'
+      }}</span>
+    </section>
+    <section class="instructions">
+      <p class="eyebrow">{{ copy().eyebrow }}</p>
+      <h1>{{ copy().title }}</h1>
+      <p class="explanation">{{ copy().explanation }}</p>
+      @if (copy().action) {
+        <div class="action">
+          <span aria-hidden="true">→</span><strong>{{ copy().action }}</strong>
+        </div>
+      }
+      @if (copy().note) {
+        <p class="note"><span aria-hidden="true">●</span> {{ copy().note }}</p>
+      }
+    </section>
+  </main>
+
+  <nav class="navigation" aria-label="Guide steps">
+    @if (index() > 0) {
+      <a class="back" [routerLink]="['/guide/registration', steps[index() - 1].slug]"
+        >← {{ language() === 'en' ? 'Previous' : 'Anterior' }}</a
+      >
+    } @else {
+      <span></span>
+    }
+    @if (index() < steps.length - 1) {
+      <a class="next" [routerLink]="['/guide/registration', steps[index() + 1].slug]"
+        >{{ language() === 'en' ? 'Next' : 'Próxima' }} →</a
+      >
+    }
+  </nav>
+</article>
