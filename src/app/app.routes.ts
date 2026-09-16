@@ -8,7 +8,6 @@ export const routes: Routes = [
   // public routes
   {
     path: 'guide/registration',
-    loadComponent: () => import('./features/registration-guide/registration-guide.component'),
     children: [
       {
         path: '',
