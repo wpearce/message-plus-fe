@@ -28,14 +28,14 @@ export const REGISTRATION_GUIDE_STEPS: RegistrationGuideStep[] = [
       en: {
         title: 'Guide to biometric registration',
         explanation:
-          'Open registration in a second tab. Read one short step here, then switch back to complete it.',
+          'Open the registration link in a second tab. It is valid for 30 minutes. Read one step here, then switch to the registration app to complete it.',
         action: 'Click the blue button',
         note: 'Your progress is saved automatically.',
       },
       pt: {
         title: 'Guia para o registro facial',
         explanation:
-          'Abra o cadastro em uma segunda aba. Leia uma etapa curta aqui e depois volte para concluir essa etapa.',
+          'Abra o cadastro em uma segunda aba. É válido por 30 minutos. Leia uma etapa curta aqui e depois volte para concluir essa etapa.',
         action: 'Clique o botão azul',
         note: 'Seu progresso é salvo automaticamente.',
       },
