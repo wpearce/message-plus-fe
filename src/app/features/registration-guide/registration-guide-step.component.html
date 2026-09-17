@@ -40,6 +40,21 @@
     </div>
   </div>
 
+  <nav class="navigation" aria-label="Guide steps">
+    @if (index() > 0) {
+      <a class="back" [routerLink]="['/guide/registration', steps[index() - 1].slug]"
+        >← {{ language() === 'en' ? 'Previous' : 'Anterior' }}</a
+      >
+    } @else {
+      <span></span>
+    }
+    @if (index() < steps.length - 1) {
+      <a class="next" [routerLink]="['/guide/registration', steps[index() + 1].slug]"
+        >{{ language() === 'en' ? 'Next' : 'Próxima' }} →</a
+      >
+    }
+  </nav>
+
   <main class="card">
     <section class="visual">
       <img [src]="step().image" [alt]="step().imageAlt[language()]" />
@@ -61,19 +76,4 @@
       }
     </section>
   </main>
-
-  <nav class="navigation" aria-label="Guide steps">
-    @if (index() > 0) {
-      <a class="back" [routerLink]="['/guide/registration', steps[index() - 1].slug]"
-        >← {{ language() === 'en' ? 'Previous' : 'Anterior' }}</a
-      >
-    } @else {
-      <span></span>
-    }
-    @if (index() < steps.length - 1) {
-      <a class="next" [routerLink]="['/guide/registration', steps[index() + 1].slug]"
-        >{{ language() === 'en' ? 'Next' : 'Próxima' }} →</a
-      >
-    }
-  </nav>
 </article>
