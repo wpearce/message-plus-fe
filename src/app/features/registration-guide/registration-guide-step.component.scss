@@ -202,6 +202,26 @@ h1 {
     padding: 44px;
   }
 }
+@media (max-width: 759px) and (orientation: portrait) {
+  .card {
+    display: grid;
+    gap: 12px;
+    overflow: visible;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .visual,
+  .instructions {
+    border: 1px solid #dce6e3;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 12px 32px #18322d0f;
+  }
+  .instructions {
+    background: white;
+  }
+}
 @media (max-width: 420px) {
   .guide {
     padding-inline: 12px;
