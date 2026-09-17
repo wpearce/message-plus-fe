@@ -1,8 +1,7 @@
 export type GuideLanguage = 'en' | 'pt';
 
 export interface GuideCopy {
-  title: string;
-  eyebrow: string;
+  title?: string;
   explanation: string;
   action?: string;
   note?: string;
@@ -19,7 +18,7 @@ export interface RegistrationGuideStep {
 export const REGISTRATION_GUIDE_STEPS: RegistrationGuideStep[] = [
   {
     slug: 'welcome',
-    image: '/assets/registration-guide/welcome.svg',
+    image: '/assets/registration-guide/inicio.png',
     kind: 'intro',
     imageAlt: {
       en: 'Two browser tabs, one for this guide and one for registration',
@@ -27,26 +26,24 @@ export const REGISTRATION_GUIDE_STEPS: RegistrationGuideStep[] = [
     },
     copy: {
       en: {
-        title: 'Keep this guide nearby',
-        eyebrow: 'Before you begin',
+        title: 'Guide to biometric registration',
         explanation:
           'Open registration in a second tab. Read one short step here, then switch back to complete it.',
-        action: 'Keep both tabs open',
-        note: 'Your place is saved automatically.',
+        action: 'Click the blue button',
+        note: 'Your progress is saved automatically.',
       },
       pt: {
-        title: 'Mantenha este guia por perto',
-        eyebrow: 'Antes de começar',
+        title: 'Guia para o registro facial',
         explanation:
-          'Abra o cadastro em uma segunda aba. Leia uma etapa aqui e volte para concluí-la.',
-        action: 'Mantenha as duas abas abertas',
+          'Abra o cadastro em uma segunda aba. Leia uma etapa curta aqui e depois volte para concluir essa etapa.',
+        action: 'Clique o botão azul',
         note: 'Seu progresso é salvo automaticamente.',
       },
     },
   },
   {
-    slug: 'personal-details',
-    image: '/assets/registration-guide/personal-details.svg',
+    slug: 'acesso-facial',
+    image: '/assets/registration-guide/acesso-facial.png',
     kind: 'step',
     imageAlt: {
       en: 'Portuguese personal details screen with name and document fields highlighted',
@@ -54,25 +51,21 @@ export const REGISTRATION_GUIDE_STEPS: RegistrationGuideStep[] = [
     },
     copy: {
       en: {
-        title: 'Enter your details',
-        eyebrow: 'Personal details',
-        explanation: 'Type your full name in “Nome completo” and your document number in “CPF”.',
-        action: 'Tap “Continuar”',
-        note: 'Use the same details shown on your document.',
+        title: 'Start registration process',
+        explanation: 'You will now take a selfie that will be uploaded to the digital concierge service',
+        action: 'Click the blue button',
       },
       pt: {
-        title: 'Informe seus dados',
-        eyebrow: 'Dados pessoais',
+        title: 'Começa o registro facial',
         explanation:
-          'Digite seu nome completo em “Nome completo” e o número do documento em “CPF”.',
-        action: 'Toque em “Continuar”',
-        note: 'Use os mesmos dados do seu documento.',
+          'Agora você vai tirar uma selfie, que será enviada para o serviço de portaria digital',
+        action: 'Clique o botão azul',
       },
     },
   },
   {
-    slug: 'phone-code',
-    image: '/assets/registration-guide/phone-code.svg',
+    slug: 'selfie',
+    image: '/assets/registration-guide/selfie.png',
     kind: 'step',
     imageAlt: {
       en: 'Portuguese verification screen with six-digit code field highlighted',
@@ -80,24 +73,19 @@ export const REGISTRATION_GUIDE_STEPS: RegistrationGuideStep[] = [
     },
     copy: {
       en: {
-        title: 'Confirm your phone',
-        eyebrow: 'Security code',
-        explanation: 'Enter the 6-digit code sent by text message in “Código de verificação”.',
-        action: 'Tap “Confirmar”',
-        note: 'The code can take a minute to arrive.',
+        title: 'Selfie instructions',
+        explanation: 'Move to a bright place. Remove glasses or a hat, clean the front camera, and keep your face fully visible.',
+        action: 'Click the blue button',
       },
       pt: {
-        title: 'Confirme seu celular',
-        eyebrow: 'Código de segurança',
-        explanation: 'Digite em “Código de verificação” os 6 números recebidos por SMS.',
-        action: 'Toque em “Confirmar”',
-        note: 'O código pode levar um minuto para chegar.',
+        explanation: 'Leia as instruções com atenção',
+        action: 'Clique o botão azul',
       },
     },
   },
   {
-    slug: 'face-scan',
-    image: '/assets/registration-guide/face-scan.svg',
+    slug: 'centralize',
+    image: '/assets/registration-guide/centralize.png',
     kind: 'step',
     imageAlt: {
       en: 'Portuguese facial verification screen showing a face inside an oval',
@@ -105,26 +93,18 @@ export const REGISTRATION_GUIDE_STEPS: RegistrationGuideStep[] = [
     },
     copy: {
       en: {
-        title: 'Get ready before switching',
-        eyebrow: 'Face scan',
         explanation:
-          'Move to a bright place. Remove glasses or a hat, clean the front camera, and keep your face fully visible.',
-        action: 'Switch tabs, then tap “Iniciar”',
-        note: 'Stay in the camera flow until it finishes.',
+          'Keep your head centrally in the oval',
       },
       pt: {
-        title: 'Prepare-se antes de voltar',
-        eyebrow: 'Reconhecimento facial',
         explanation:
-          'Vá para um lugar claro. Tire óculos ou boné, limpe a câmera frontal e deixe o rosto visível.',
-        action: 'Volte à outra aba e toque em “Iniciar”',
-        note: 'Permaneça na câmera até concluir.',
+          'Siga sempre as instruções fornecidas',
       },
     },
   },
   {
-    slug: 'review',
-    image: '/assets/registration-guide/review.svg',
+    slug: 'vire',
+    image: '/assets/registration-guide/vire.png',
     kind: 'step',
     imageAlt: {
       en: 'Portuguese review screen with the confirm button highlighted',
@@ -132,24 +112,22 @@ export const REGISTRATION_GUIDE_STEPS: RegistrationGuideStep[] = [
     },
     copy: {
       en: {
-        title: 'Check and submit',
-        eyebrow: 'Final check',
+        title: 'Register your face',
         explanation:
-          'Review your name, document and phone. Go back in registration if anything is wrong.',
-        action: 'Tap “Confirmar cadastro”',
+          'Turn your head towards the indicated direction',
+        action: 'Continue the process until you see the next screen',
       },
       pt: {
-        title: 'Revise e envie',
-        eyebrow: 'Conferência final',
-        explanation:
-          'Confira nome, documento e celular. Volte no cadastro se algo estiver incorreto.',
-        action: 'Toque em “Confirmar cadastro”',
+        title: 'Registro facial',
+        explanation: 'Vire a cabeça na direção indicada',
+        action:
+          'Continue o processo até ver a próxima tela',
       },
     },
   },
   {
-    slug: 'invalid-code',
-    image: '/assets/registration-guide/invalid-code.svg',
+    slug: 'confirmar',
+    image: '/assets/registration-guide/confirmar.png',
     kind: 'error',
     imageAlt: {
       en: 'Portuguese invalid-code error message',
@@ -157,26 +135,22 @@ export const REGISTRATION_GUIDE_STEPS: RegistrationGuideStep[] = [
     },
     copy: {
       en: {
-        title: 'Code not accepted?',
-        eyebrow: 'Troubleshooting',
         explanation:
-          'Check that you entered the newest 6-digit code. Older codes stop working after you request another.',
-        action: 'Tap “Reenviar código”',
-        note: 'Wait one minute before requesting again.',
+          'Confirm your selfie',
+        action: 'Click “Enviar” to upload your selfie to the digital concierge',
+        note: 'If your are not happy with your photo, click “Refazer” to try again',
       },
       pt: {
-        title: 'Código não aceito?',
-        eyebrow: 'Solução de problemas',
-        explanation:
-          'Confira se digitou o código mais recente. Códigos antigos deixam de funcionar após um novo pedido.',
-        action: 'Toque em “Reenviar código”',
-        note: 'Espere um minuto antes de pedir novamente.',
+        explanation: 'Confirme sua selfie',
+        action:
+          'Clique em “Enviar” para enviar sua selfie à portaria digital',
+        note: 'Se você não estiver satisfeito com a foto, clique em “Refazer” para tentar novamente.',
       },
     },
   },
   {
-    slug: 'camera-error',
-    image: '/assets/registration-guide/camera-error.svg',
+    slug: 'sucesso',
+    image: '/assets/registration-guide/sucesso.png',
     kind: 'error',
     imageAlt: {
       en: 'Portuguese camera permission error message',
@@ -184,26 +158,22 @@ export const REGISTRATION_GUIDE_STEPS: RegistrationGuideStep[] = [
     },
     copy: {
       en: {
-        title: 'Camera not opening?',
-        eyebrow: 'Troubleshooting',
+        title: 'Registration complete',
         explanation:
-          'Allow camera access in your browser settings, close other apps using the camera, then return to registration.',
-        action: 'Tap “Tentar novamente”',
-        note: 'Do not use a private browsing tab.',
+          'If you see this screen, the biometric registration has been completed successfully',
+        action: 'See next step, if you do not get this screen',
       },
       pt: {
-        title: 'A câmera não abre?',
-        eyebrow: 'Solução de problemas',
+        title: 'Cadastro concluído',
         explanation:
-          'Permita o acesso à câmera no navegador, feche outros apps que usam a câmera e volte ao cadastro.',
-        action: 'Toque em “Tentar novamente”',
-        note: 'Não use uma aba anônima.',
+          'Se você vir esta tela, o cadastro biométrico foi concluído com sucesso',
+        action: 'Veja a próxima etapa caso esta tela não apareça',
       },
     },
   },
   {
-    slug: 'complete',
-    image: '/assets/registration-guide/complete.svg',
+    slug: 'error',
+    image: '/assets/registration-guide/error.png',
     kind: 'success',
     imageAlt: {
       en: 'Portuguese registration completed screen with a check mark',
@@ -211,18 +181,16 @@ export const REGISTRATION_GUIDE_STEPS: RegistrationGuideStep[] = [
     },
     copy: {
       en: {
-        title: 'You’re all set',
-        eyebrow: 'Registration complete',
+        title: 'Something went wrong?',
         explanation:
-          'When you see “Cadastro concluído”, your information has been sent successfully.',
-        action: 'You can close this guide',
+          'If you get this message, something went wrong. Please try again, until you sucessfully register your face',
+        action: 'Go back to step one of guide',
       },
       pt: {
-        title: 'Tudo pronto',
-        eyebrow: 'Cadastro concluído',
+        title: 'Algo deu errado?',
         explanation:
-          'Quando aparecer “Cadastro concluído”, suas informações foram enviadas com sucesso.',
-        action: 'Você pode fechar este guia',
+          'Se você receber esta mensagem, algo deu errado. Tente novamente até conseguir cadastrar seu rosto com sucesso',
+        action: 'Volte para a primeira etapa do guia',
       },
     },
   },
