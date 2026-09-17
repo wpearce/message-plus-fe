@@ -220,6 +220,27 @@ h1 {
   }
   .instructions {
     background: white;
+    padding: 20px;
+  }
+  .visual {
+    min-height: 360px;
+    padding-top: 22px;
+  }
+  .visual img {
+    width: auto;
+    height: min(48vh, 400px);
+    max-width: 100%;
+    max-height: none;
+  }
+  h1 {
+    font-size: clamp(1.65rem, 7vw, 2.1rem);
+  }
+  .action {
+    margin-top: 16px;
+    padding: 12px 14px;
+  }
+  .note {
+    margin-top: 12px;
   }
 }
 @media (max-width: 420px) {
@@ -227,10 +248,9 @@ h1 {
     padding-inline: 12px;
   }
   .visual {
-    min-height: 250px;
-    padding-top: 22px;
+    min-height: 340px;
   }
   .visual img {
-    max-height: 300px;
+    height: min(46vh, 370px);
   }
 }
