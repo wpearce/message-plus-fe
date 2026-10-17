@@ -128,7 +128,7 @@ export const REGISTRATION_GUIDE_STEPS: RegistrationGuideStep[] = [
   {
     slug: 'confirmar',
     image: '/assets/registration-guide/confirmar.png',
-    kind: 'error',
+    kind: 'step',
     imageAlt: {
       en: 'Portuguese invalid-code error message',
       pt: 'Mensagem de erro de código inválido',
@@ -151,7 +151,7 @@ export const REGISTRATION_GUIDE_STEPS: RegistrationGuideStep[] = [
   {
     slug: 'sucesso',
     image: '/assets/registration-guide/sucesso.png',
-    kind: 'error',
+    kind: 'success',
     imageAlt: {
       en: 'Portuguese camera permission error message',
       pt: 'Mensagem de erro de permissão da câmera',
@@ -174,7 +174,7 @@ export const REGISTRATION_GUIDE_STEPS: RegistrationGuideStep[] = [
   {
     slug: 'error',
     image: '/assets/registration-guide/error.png',
-    kind: 'success',
+    kind: 'error',
     imageAlt: {
       en: 'Portuguese registration completed screen with a check mark',
       pt: 'Tela de cadastro concluído com marca de confirmação',
