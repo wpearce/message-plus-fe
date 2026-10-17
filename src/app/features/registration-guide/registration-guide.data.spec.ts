@@ -6,17 +6,25 @@ describe('registration guide data', () => {
 
     expect(new Set(slugs).size).toBe(slugs.length);
     for (const step of REGISTRATION_GUIDE_STEPS) {
-      expect(step.copy.en.title).toBeTruthy();
-      expect(step.copy.pt.title).toBeTruthy();
-      expect(step.image).toMatch(/^\/assets\/registration-guide\/.+\.svg$/);
+      expect(step.slug).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+      for (const language of ['en', 'pt'] as const) {
+        expect(step.copy[language].explanation.trim()).toBeTruthy();
+        expect(step.imageAlt[language].trim()).toBeTruthy();
+        if (step.copy[language].title !== undefined) {
+          expect(step.copy[language].title?.trim()).toBeTruthy();
+        }
+      }
+      expect(step.image).toMatch(/^\/assets\/registration-guide\/.+\.(?:png|svg)$/);
     }
   });
 
-  it('includes preparation, troubleshooting, and completion steps', () => {
-    expect(REGISTRATION_GUIDE_STEPS.some((step) => step.slug === 'face-scan')).toBe(true);
-    expect(REGISTRATION_GUIDE_STEPS.filter((step) => step.kind === 'error').length).toBeGreaterThan(
-      0,
-    );
-    expect(REGISTRATION_GUIDE_STEPS.at(-1)?.kind).toBe('success');
+  it('includes preparation, confirmation, completion, and troubleshooting steps', () => {
+    expect(REGISTRATION_GUIDE_STEPS[0]?.slug).toBe('welcome');
+    expect(REGISTRATION_GUIDE_STEPS[0]?.kind).toBe('intro');
+    expect(REGISTRATION_GUIDE_STEPS.find((step) => step.slug === 'selfie')?.kind).toBe('step');
+    expect(REGISTRATION_GUIDE_STEPS.find((step) => step.slug === 'confirmar')?.kind).toBe('step');
+    expect(REGISTRATION_GUIDE_STEPS.find((step) => step.slug === 'sucesso')?.kind).toBe('success');
+    expect(REGISTRATION_GUIDE_STEPS.at(-1)?.slug).toBe('error');
+    expect(REGISTRATION_GUIDE_STEPS.at(-1)?.kind).toBe('error');
   });
 });
