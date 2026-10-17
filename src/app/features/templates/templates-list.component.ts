@@ -1,13 +1,14 @@
-import {Component, computed, inject, signal} from '@angular/core';
+import {Component, computed, inject, signal, viewChild} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import { TemplatesService } from '../../core/services/template.service';
 import { MessageTemplate, Tag } from '../../core/models/message-template';
-import {BehaviorSubject, catchError, combineLatest, filter, of, shareReplay, startWith, Subject, switchMap, tap} from 'rxjs';
+import {BehaviorSubject, catchError, combineLatest, filter, of, map, shareReplay, switchMap, tap} from 'rxjs';
 import { TemplateItemComponent } from './template.component';
 import {RouterLink} from '@angular/router';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {ConfirmDiscardDialogComponent} from './confirm-discard-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {MatPaginator, MatPaginatorModule, MatPaginatorIntl, PageEvent} from '@angular/material/paginator';
 import {TagFilterComponent} from './tag-filter.component';
 import {TagService} from '../../core/services/tag.service';
 import {AuthorizationService} from '../../core/services/authorization.service';
@@ -15,7 +16,8 @@ import {AuthorizationService} from '../../core/services/authorization.service';
 @Component({
   selector: 'mp-templates-list',
   standalone: true,
-  imports: [TemplateItemComponent, RouterLink, TagFilterComponent],
+  imports: [TemplateItemComponent, RouterLink, TagFilterComponent, MatPaginatorModule],
+  providers: [MatPaginatorIntl],
   template: `
     <section class="container">
       @if (isReadOnly()) {
@@ -58,7 +60,7 @@ import {AuthorizationService} from '../../core/services/authorization.service';
       </header>
 
       @if (loading()) {
-        <p>Loading…</p>
+        <p role="status">Loading…</p>
       } @else if (error()) {
         <p class="error">{{ error() }}</p>
       } @else if (templates().length === 0) {
@@ -75,9 +77,23 @@ import {AuthorizationService} from '../../core/services/authorization.service';
           }
         </ul>
       }
+      <mat-paginator
+        aria-label="Message template pages"
+        [style.display]="loading() ? 'none' : null"
+        [length]="totalElements()"
+        [pageIndex]="pageIndex()"
+        [pageSize]="pageSize()"
+        [hidePageSize]="true"
+        [disabled]="loading()"
+        (page)="onPageChanged($event)"
+      ></mat-paginator>
     </section>
   `,
   styles: [`
+    mat-paginator {
+      zoom: 1.15;
+    }
+
     .container {
       max-width: 720px;
       margin: 2rem auto;
@@ -168,8 +184,14 @@ export default class TemplatesListComponent {
   private readonly oidc = inject(OidcSecurityService);
   private readonly dialog = inject(MatDialog);
 
-  private readonly refresh$ = new Subject<void>();
-  private readonly tagFilters$ = new BehaviorSubject<string[]>([]);
+  private readonly paginator = viewChild(MatPaginator);
+  private readonly paginatorIntl = inject(MatPaginatorIntl);
+  private readonly query$ = new BehaviorSubject({ tagIds: [] as string[], pageIndex: 0 });
+
+  readonly pageIndex = signal(0);
+  readonly pageSize = signal(5);
+  readonly totalElements = signal(0);
+  readonly totalPages = signal(0);
 
   readonly hasTemplatesWriteScope = toSignal(this.authorizationService.hasTemplatesWriteScope$, { initialValue: false });
   readonly isReadOnly = computed(() => !this.hasTemplatesWriteScope());
@@ -191,21 +213,37 @@ export default class TemplatesListComponent {
 
   templates = toSignal<MessageTemplate[], MessageTemplate[]>(
     combineLatest([
-      this.refresh$.pipe(startWith(void 0)),
-      this.tagFilters$,
+      this.query$,
       this.tags$
     ]).pipe(
       tap(() => {
         this.loading.set(true);
         this.error.set(null);
       }),
-      switchMap(([, selectedTagIds, tags]) => {
-        const tagNames = selectedTagIds
+      switchMap(([query, tags]) => {
+        const tagNames = query.tagIds
           .map((tagId: string) => tags.find((tag) => tag.id === tagId)?.name)
           .filter((tagName): tagName is string => Boolean(tagName));
-        return this.api.getAll(tagNames).pipe(
-          tap(() => this.loading.set(false)),
+        return this.api.getAll(tagNames, query.pageIndex, this.pageSize()).pipe(
+          // A deletion (including one by another user) can remove the requested page.
+          switchMap(page => {
+            const lastPageIndex = Math.max(0, page.totalPages - 1);
+            return page.number > lastPageIndex
+              ? this.api.getAll(tagNames, lastPageIndex, page.size)
+              : of(page);
+          }),
+          tap(page => {
+            this.pageIndex.set(page.number);
+            this.pageSize.set(page.size);
+            this.totalElements.set(page.totalElements);
+            this.totalPages.set(page.totalPages);
+            this.paginatorIntl.changes.next();
+            this.loading.set(false);
+          }),
+          map(page => page.content),
           catchError(err => {
+            const paginator = this.paginator();
+            if (paginator) paginator.pageIndex = this.pageIndex();
             this.loading.set(false);
             this.error.set('Failed to load templates.');
             console.error('Failed to load templates', err);
@@ -217,9 +255,18 @@ export default class TemplatesListComponent {
     { initialValue: [] as MessageTemplate[] }
   );
 
+  constructor() {
+    this.paginatorIntl.getRangeLabel = () =>
+      `Page ${this.totalPages() === 0 ? 0 : this.pageIndex() + 1} of ${this.totalPages()}`;
+  }
+
+  onPageChanged(event: PageEvent): void {
+    this.query$.next({ tagIds: this.selectedTags(), pageIndex: event.pageIndex });
+  }
+
   onTagSelectionChanged(tags: string[]): void {
     this.selectedTags.set(tags);
-    this.tagFilters$.next(tags);
+    this.query$.next({ tagIds: tags, pageIndex: 0 });
   }
 
   onDeleteRequested(message: MessageTemplate): void {
@@ -240,7 +287,7 @@ export default class TemplatesListComponent {
       filter((confirmed: boolean) => confirmed),
       switchMap(() => this.api.delete(String(message.id)))
     ).subscribe({
-      next: () => this.refresh$.next(),
+      next: () => this.query$.next({ tagIds: this.selectedTags(), pageIndex: this.pageIndex() }),
       error: (err) => {
         console.error('Failed to delete template', err);
         this.error.set('Failed to delete template.');
