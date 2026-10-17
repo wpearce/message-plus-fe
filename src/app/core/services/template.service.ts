@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { MessageTemplate } from '../models/message-template';
+import { Page } from '../models/page';
 import { Observable } from 'rxjs';
 import {AiResponse} from '../models/AiResponse';
 
@@ -11,12 +12,12 @@ export class TemplatesService {
   private readonly templatesBaseUrl = `${environment.apiBaseUrl}/templates`;
   private readonly aiBaseUrl = `${environment.apiBaseUrl}/ai`;
 
-  getAll(tagNames: readonly string[] = []): Observable<MessageTemplate[]> {
-    let params = new HttpParams().set('paged', 'false');
+  getAll(tagNames: readonly string[] = [], page = 0, size = 5): Observable<Page<MessageTemplate>> {
+    let params = new HttpParams().set('page', page).set('size', size);
     tagNames.forEach((tag) => {
       params = params.append('tagNames', tag);
     });
-    return this.http.get<MessageTemplate[]>(this.templatesBaseUrl, { params });
+    return this.http.get<Page<MessageTemplate>>(this.templatesBaseUrl, { params });
   }
 
   getById(id: string): Observable<MessageTemplate> {
