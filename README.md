@@ -36,6 +36,20 @@ ng build
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
+## Appearance
+
+The header's **New UI** switch toggles between the original UI (the default) and
+Signal. `AppearanceService` restores and saves `current` or `signal` under the
+`messageplus.appearance` local storage key. If storage is unavailable, switching
+still works for the current session.
+
+Both appearances use the same components, forms, routes, and message logic.
+Original styles stay in their components; Signal overrides live exclusively in
+`src/app/styles/_signal.scss`, scoped to `html[data-appearance='signal']`.
+The root attribute also covers Material dialogs and snackbars. Apply appearance
+changes through the service rather than conditionally recreating components, so
+filters, pagination, and unsaved edits survive a toggle.
+
 ## Running unit tests
 
 To execute unit tests with the [Vitest](https://vitest.dev) runner in the default browserless `jsdom` environment, use the following command:

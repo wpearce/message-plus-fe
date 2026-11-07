@@ -9,6 +9,7 @@ import { TagService } from '../../core/services/tag.service';
 import { TemplatesService } from '../../core/services/template.service';
 import { TemplateEditComponent } from './template-edit.component';
 import { TemplateFirstSaveTagsDialogComponent } from './template-first-save-tags-dialog.component';
+import { APPEARANCE_STORAGE_KEY, AppearanceService } from '../../core/services/appearance.service';
 
 describe('TemplateEditComponent', () => {
   const availableTags = [{ id: 'tag-1', name: 'Important' }];
@@ -95,6 +96,28 @@ describe('TemplateEditComponent', () => {
     expect((fixture.nativeElement as HTMLElement).querySelector('.err')?.textContent).toContain(
       'Failed to create template.'
     );
+  });
+
+  it('keeps unsaved edits and the same form when changing appearance', async () => {
+    const fixture = await createComponent();
+    const element = fixture.nativeElement as HTMLElement;
+    const title = element.querySelector<HTMLInputElement>('input[formControlName="title"]')!;
+    title.value = 'My unsaved message';
+    title.dispatchEvent(new Event('input'));
+    await fixture.whenStable();
+    const appearance = TestBed.inject(AppearanceService);
+    try {
+      appearance.toggle();
+      await fixture.whenStable();
+      expect(element.querySelector('input[formControlName="title"]')).toBe(title);
+      expect(title.value).toBe('My unsaved message');
+      expect(fixture.componentInstance.form.dirty).toBe(true);
+      expect(templatesService.create).not.toHaveBeenCalled();
+      expect(templatesService.update).not.toHaveBeenCalled();
+    } finally {
+      localStorage.removeItem(APPEARANCE_STORAGE_KEY);
+      document.documentElement.removeAttribute('data-appearance');
+    }
   });
 
   async function createComponent(): Promise<ComponentFixture<TemplateEditComponent>> {

@@ -26,12 +26,13 @@ import {AuthorizationService} from '../../core/services/authorization.service';
         </div>
       }
 
-      <header class="toolbar ">
+      <header class="toolbar">
         <mp-tag-filter
           [availableTags]="availableTags()"
           [selectedTags]="selectedTags()"
           (selectionChanged)="onTagSelectionChanged($event)"
         ></mp-tag-filter>
+        <p class="signal-subheading">Your bilingual message collection</p>
         <div class="toolbar-actions">
           <button
             type="button"
@@ -41,9 +42,9 @@ import {AuthorizationService} from '../../core/services/authorization.service';
             [title]="isReadOnly() ? 'Read-only mode' : 'Create a new message'"
             aria-label="Create a new message"
           >
-            +
+            <span aria-hidden="true">+</span><span class="signal-add-label"> Add message</span>
           </button>
-          <button class="icon-btn" type="button" (click)="logout()">
+          <button class="icon-btn" type="button" aria-label="Logout" title="Logout" (click)="logout()">
             <svg viewBox="0 0 24 24" aria-hidden="true" class="icon">
               <!-- exit/logout icon -->
               <path
@@ -111,12 +112,17 @@ import {AuthorizationService} from '../../core/services/authorization.service';
     }
 
     .toolbar {
-      display: flex;
-      align-items: center;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: start;
       gap: .75rem;
       margin-bottom: 1rem;
-      justify-content: space-between;
-      flex-wrap: wrap;
+    }
+    .toolbar mp-tag-filter {
+      min-width: 0;
+    }
+    .signal-heading, .signal-subheading, .signal-add-label {
+      display: none;
     }
     .toolbar h1 {
       margin: 0;
