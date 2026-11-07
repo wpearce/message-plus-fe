@@ -10,6 +10,7 @@ import { vi } from 'vitest';
 import { TagService } from '../../core/services/tag.service';
 import { AuthorizationService } from '../../core/services/authorization.service';
 import TemplatesListComponent from './templates-list.component';
+import { APPEARANCE_STORAGE_KEY, AppearanceService } from '../../core/services/appearance.service';
 
 describe('TemplatesListComponent pagination', () => {
   let http: HttpTestingController;
@@ -127,5 +128,28 @@ describe('TemplatesListComponent pagination', () => {
     request(1).flush(response(1, 6));
     expect(fixture.componentInstance.error()).toBeNull();
     expect(fixture.componentInstance.pageIndex()).toBe(1);
+  });
+
+  it('keeps the selected filters, page and message nodes when appearance changes', async () => {
+    const fixture = TestBed.createComponent(TemplatesListComponent);
+    fixture.autoDetectChanges();
+    request(0).flush(response(0, 11));
+    fixture.componentInstance.onTagSelectionChanged(['tag-1']);
+    request(0).flush(response(0, 11));
+    fixture.componentInstance.onPageChanged({ pageIndex: 1, pageSize: 5, length: 11 });
+    request(1).flush(response(1, 11));
+    await fixture.whenStable();
+    const message = fixture.nativeElement.querySelector('mp-template');
+    try {
+      TestBed.inject(AppearanceService).toggle();
+      await fixture.whenStable();
+      expect(fixture.componentInstance.selectedTags()).toEqual(['tag-1']);
+      expect(fixture.componentInstance.pageIndex()).toBe(1);
+      expect(fixture.nativeElement.querySelector('mp-template')).toBe(message);
+      http.expectNone(r => r.url.endsWith('/templates'));
+    } finally {
+      localStorage.removeItem(APPEARANCE_STORAGE_KEY);
+      document.documentElement.removeAttribute('data-appearance');
+    }
   });
 });

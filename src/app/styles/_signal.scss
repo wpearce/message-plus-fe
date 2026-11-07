@@ -1,0 +1,244 @@
+@use '@angular/material' as mat;
+
+// Signal is a skin over the shared components. All overrides live behind this
+// one root attribute; removing it restores the original component styles.
+@mixin appearance() {
+  :root[data-appearance='signal'] {
+    --mp-signal-ink: light-dark(#181a17, #f0f0de);
+    --mp-signal-paper: light-dark(#f7f6f0, #252525);
+    --mp-signal-canvas: light-dark(#e7e6e0, #171717);
+    --mp-signal-muted: light-dark(#52564d, #b8bcaf);
+    --mp-signal-line: light-dark(#a5a79c, #62665a);
+    --mp-signal-lime: #d2ff36;
+    --mp-signal-on-lime: #192106;
+    --mp-signal-error: light-dark(#a22323, #ffb4ab);
+
+    --mat-sys-surface: var(--mp-signal-canvas);
+    --mat-sys-surface-container: var(--mp-signal-paper);
+    --mat-sys-surface-container-low: var(--mp-signal-paper);
+    --mat-sys-surface-container-high: var(--mp-signal-paper);
+    --mat-sys-surface-container-highest: var(--mp-signal-paper);
+    --mat-sys-on-surface: var(--mp-signal-ink);
+    --mat-sys-on-surface-variant: var(--mp-signal-muted);
+    --mat-sys-primary: var(--mp-signal-ink);
+    --mat-sys-on-primary: var(--mp-signal-paper);
+    --mat-sys-primary-container: var(--mp-signal-paper);
+    --mat-sys-on-primary-container: var(--mp-signal-ink);
+    --mat-sys-secondary: var(--mp-signal-ink);
+    --mat-sys-secondary-container: light-dark(#e5ebd5, #384127);
+    --mat-sys-on-secondary-container: var(--mp-signal-ink);
+    --mat-sys-outline: var(--mp-signal-line);
+    --mat-sys-outline-variant: var(--mp-signal-line);
+    --mat-sys-surface-variant: var(--mp-signal-line);
+    --mat-sys-error: var(--mp-signal-error);
+    --mat-sys-body-medium: 400 14px / 1.65 Arial, sans-serif;
+    --mat-sys-title-large: 700 24px / 1.2 Arial, sans-serif;
+    --mat-sys-label-medium: 400 12px / 1.5 monospace;
+    --mat-sys-label-large: 500 14px / 1.5 monospace;
+
+    @include mat.paginator-overrides((
+      container-background-color: transparent,
+      container-text-color: var(--mp-signal-ink),
+      enabled-icon-color: var(--mp-signal-ink),
+      disabled-icon-color: var(--mp-signal-line),
+    ));
+    @include mat.dialog-overrides((
+      container-color: var(--mp-signal-paper),
+      container-shape: 0,
+      subhead-color: var(--mp-signal-ink),
+      supporting-text-color: var(--mp-signal-ink),
+    ));
+    @include mat.snack-bar-overrides((
+      container-color: var(--mp-signal-ink),
+      supporting-text-color: var(--mp-signal-paper),
+      container-shape: 0,
+    ));
+    @include mat.button-overrides((
+      text-label-text-color: var(--mp-signal-ink),
+      text-container-shape: 0,
+    ));
+
+    body { font-family: Arial, sans-serif; }
+
+    mp-root .shell {
+      max-width: 960px;
+      margin-inline: auto;
+      border-bottom: 2px solid var(--mp-signal-ink);
+      padding: 1.5rem 1rem;
+    }
+    mp-root .brand {
+      font-family: monospace;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--mp-signal-ink);
+    }
+    mp-root .appearance-switch:checked {
+      border-color: var(--mp-signal-ink);
+      background: var(--mp-signal-lime);
+    }
+    mp-root .appearance-switch:checked::before { background: var(--mp-signal-on-lime); }
+
+    // Shared controls, including the tag dialog rendered in the CDK overlay.
+    .icon-btn, .btn {
+      border-radius: 0;
+      border-color: var(--mp-signal-ink);
+      cursor: pointer;
+    }
+    .btn.primary {
+      background: var(--mp-signal-lime);
+      color: var(--mp-signal-on-lime);
+      border-color: var(--mp-signal-ink);
+      box-shadow: 3px 3px 0 var(--mp-signal-ink);
+    }
+    button:disabled { cursor: not-allowed; }
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 3px solid var(--mp-signal-ink);
+      outline-offset: 4px;
+    }
+
+    mp-templates-list {
+      .container { max-width: 880px; }
+      .toolbar {
+        grid-template-rows: auto auto auto;
+        column-gap: 1.5rem;
+        row-gap: .75rem;
+        margin-bottom: 1.5rem;
+      }
+      .toolbar .signal-heading {
+        display: block;
+        grid-column: 1;
+        grid-row: 1;
+        font: 800 clamp(2.4rem, 6vw, 4rem) / .95 Arial, sans-serif;
+        letter-spacing: -.065em;
+        text-transform: uppercase;
+        overflow-wrap: anywhere;
+      }
+      .signal-subheading {
+        display: block;
+        grid-column: 1 / -1;
+        grid-row: 2;
+        font: 400 12px / 1.5 monospace;
+        text-transform: uppercase;
+        color: var(--mp-signal-muted);
+        margin: 0 0 .5rem;
+      }
+      .toolbar mp-tag-filter { grid-column: 1 / -1; grid-row: 3; }
+      .toolbar-actions { grid-column: 2; grid-row: 1; gap: .75rem; }
+      .add-btn { font: 500 13px / 1.4 Arial, sans-serif; min-height: 40px; }
+      .signal-add-label { display: inline; }
+      .read-only-banner { border-radius: 0; background: var(--mp-signal-paper); }
+      .list li { padding: 0; border: 0; margin-bottom: 1.5rem; }
+      .error { color: var(--mp-signal-error); }
+      mat-paginator { zoom: 1; }
+    }
+
+    mp-tag-filter .tag-filter {
+      gap: 0;
+      border: 1px solid var(--mp-signal-ink);
+      background: var(--mp-signal-paper);
+    }
+    mp-tag-filter .tag-filter__item {
+      border-radius: 0;
+      border: 0;
+      border-right: 1px solid var(--mp-signal-line);
+      box-shadow: 0 1px 0 var(--mp-signal-line);
+      padding: .65rem .85rem;
+      font-family: monospace;
+      color: var(--mp-signal-ink);
+      background: transparent;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+    mp-tag-filter .tag-filter__item.is-selected,
+    mp-template-tagging .tagging__item.is-selected {
+      background: var(--mp-signal-lime);
+      color: var(--mp-signal-on-lime);
+    }
+
+    mp-template {
+      .card {
+        padding: 0;
+        gap: 0;
+        grid-template-columns: minmax(0, 1fr) auto;
+        border: 1px solid var(--mp-signal-ink);
+        border-radius: 0;
+        background: var(--mp-signal-paper);
+        color: var(--mp-signal-ink);
+        box-shadow: 5px 5px 0 var(--mp-signal-ink);
+      }
+      .title {
+        grid-column: 1;
+        grid-row: 1;
+        margin: 0;
+        padding: 1rem 0 .5rem 1rem;
+        font: 700 22px / 1.2 Arial, sans-serif;
+        letter-spacing: -.035em;
+        overflow-wrap: anywhere;
+      }
+      .icon-bar {
+        grid-column: 2;
+        grid-row: 1;
+        padding: .75rem;
+        gap: .25rem;
+      }
+      .icon-bar .icon-btn { border-color: transparent; background: transparent; }
+      .tags { grid-row: 2; margin: 0; padding: 0 1rem 1rem; }
+      .body {
+        grid-column: 1 / -1;
+        padding: 1rem;
+        border-top: 1px solid var(--mp-signal-ink);
+      }
+      .body + .body { margin: 0; border-left: 0; border-top: 1px solid var(--mp-signal-ink); }
+      .body h3 { font: 400 12px / 1.5 monospace; text-transform: uppercase; letter-spacing: .08em; }
+      .text { padding: 0; border: 0; border-radius: 0; background: transparent; }
+    }
+    mp-tag .tag {
+      border: 0;
+      border-radius: 0;
+      font-family: monospace;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+    mp-tag { max-width: 100%; }
+
+    mp-template-edit {
+      .page { background: transparent; }
+      .hdr { flex-wrap: wrap; }
+      .hdr h1 { font: 800 clamp(1.8rem, 5vw, 3rem) / 1 Arial, sans-serif; text-transform: uppercase; letter-spacing: -.05em; }
+      input, textarea, .err { border-radius: 0; }
+      input, textarea { border-color: var(--mp-signal-ink); }
+      .lbl-row { flex-wrap: wrap; }
+      .ai-actions { flex-wrap: wrap; }
+      .btn.sm { border-radius: 0; }
+    }
+    mp-template-tagging .tagging__item { border-radius: 0; font-family: monospace; }
+
+    @media (min-width: 900px) {
+      mp-template {
+        .card { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .title { grid-column: 1; }
+        .icon-bar { grid-column: 2; }
+        .body { grid-column: 1; grid-row: 3; }
+        .body + .body { grid-column: 2; border-left: 1px solid var(--mp-signal-ink); padding: 1rem; }
+      }
+    }
+    @media (max-width: 600px) {
+      mp-templates-list {
+        .container { padding-inline: 0; margin-block: 1rem; }
+        .toolbar { column-gap: .75rem; }
+        .toolbar-actions { grid-row: 1; grid-column: 1 / -1; justify-self: end; }
+        .toolbar .signal-heading { grid-row: 2; grid-column: 1 / -1; }
+        .signal-subheading { grid-row: 3; }
+        .toolbar mp-tag-filter { grid-row: 4; }
+      }
+    }
+    @media (pointer: coarse) {
+      .icon-btn, .btn, .appearance-toggle,
+      mp-tag-filter .tag-filter__item, mp-template-tagging .tagging__item {
+        min-height: 44px;
+        min-width: 44px;
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
 @use '@angular/material' as mat;
 @use './app/styles/_theme-colors.scss' as theme;
+@use './app/styles/signal';
 
 /* ---------- Light theme (global) ---------- */
 $brand-light: mat.define-theme((
@@ -82,3 +83,6 @@ body {
 .icon-btn:disabled:hover {
   background: var(--mat-sys-surface-container);
 }
+
+// Load appearance overrides after the shared Material and application styles.
+@include signal.appearance();
